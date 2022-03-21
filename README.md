@@ -1,59 +1,113 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# epict
-
-<!-- badges: start -->
+# Cycle threshold modelling
 
 [![R-CMD-check](https://github.com/seabbs/epict/workflows/R-CMD-check/badge.svg)](https://github.com/seabbs/epict/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Codecov test
 coverage](https://codecov.io/gh/seabbs/epict/branch/main/graph/badge.svg)](https://app.codecov.io/gh/seabbs/epict?branch=main)
-<!-- badges: end -->
 
-The goal of epict is to …
+[![MIT
+license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/epiforecasts/epict/blob/master/LICENSE.md/)
+[![GitHub
+contributors](https://img.shields.io/github/contributors/seabbs/epict)](https://github.com/seabbs/epict/graphs/contributors)
+
+This package contains tools to enable flexible and efficient …
 
 ## Installation
 
-You can install the development version of epict like so:
+### Installing the package
+
+Install the unstable development from GitHub using the following,
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+remotes::install_github("seabbs/epict", dependencies = TRUE)
 ```
 
-## Example
+### Installing CmdStan
 
-This is a basic example which shows you how to solve a common problem:
+If you don’t already have CmdStan installed then, in addition to
+installing `epict`, it is also necessary to install CmdStan using
+CmdStanR’s `install_cmdstan()` function to enable model fitting in
+`epict`. A suitable C++ toolchain is also required. Instructions are
+provided in the [*Getting started with
+CmdStanR*](https://mc-stan.org/cmdstanr/articles/cmdstanr.html)
+vignette. See the [CmdStanR
+documentation](https://mc-stan.org/cmdstanr/) for further details and
+support.
+
+``` r
+cmdstanr::install_cmdstan()
+```
+
+## Quick start
+
+### Package
+
+As well as `epict` this quick start makes use of `data.table` and
+`ggplot2` which are both installed when `epict` is installed.
 
 ``` r
 library(epict)
-## basic example code
+library(data.table)
+library(ggplot2)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+### Data
 
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
+### Data preprocessing and model specification
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
+### Model fitting
 
-You can also embed plots, for example:
+### Results
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+## Citation
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+If using `epict` in your work please consider citing it using the
+following,
+
+    #> 
+    #> To cite epict in publications use:
+    #> 
+    #>   Sam Abbott, Timothy Russell, Joel Hellewell (2022). epict: Cycle
+    #>   threshold modelling, DOI:
+    #> 
+    #> A BibTeX entry for LaTeX users is
+    #> 
+    #>   @Article{,
+    #>     title = {epict: Cycle threshold modelling},
+    #>     author = {Sam Abbott and Timothy Russell and Joel Hellewell},
+    #>     journal = {Zenodo},
+    #>     year = {2022},
+    #>   }
+
+## How to make a bug report or feature request
+
+Please briefly describe your problem and what output you expect in an
+[issue](https://github.com/seabbs/epict/issues). If you have a question,
+please don’t open an issue. Instead, ask on our [Q and A
+page](https://github.com/seabbs/epict/discussions/categories/q-a).
+
+## Contributing
+
+We welcome contributions and new contributors\! We particularly
+appreciate help on priority problems in the
+[issues](https://github.com/seabbs/epict/issues). Please check and add
+to the issues, and/or add a [pull
+request](https://github.com/seabbs/epict/pulls).
+
+If interested in expanding the functionality of the underlying model
+note that `epict` allows users to pass in their own models meaning that
+alternative parameterisations may be easily tested within the package
+infrastructure. Once this testing has been done alterations that
+increase the flexibility of the package model and improves its defaults
+are very welcome via pull request or other communication with the
+package authors.
+
+## Code of Conduct
+
+Please note that the `epict` project is released with a [Contributor
+Code of Conduct](https://samabbott.co.uk/epict/CODE_OF_CONDUCT.html). By
+contributing to this project, you agree to abide by its terms.

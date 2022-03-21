@@ -1,5 +1,5 @@
 Package: epict
-Title: Individual level Cycle Threshold Modelling
+Title: Cycle Threshold Modelling
 Version: 0.1.0
 Authors@R: c(
     person("Sam", "Abbott", , "sam.abbott@lshtm.ac.uk", role = c("aut", "cre"),
@@ -7,7 +7,7 @@ Authors@R: c(
     person("Tim", "Russell", , "timothy.russell@lshtm.ac.uk", role = "aut"),
     person("Joel", "Hellewell", , "joel.hellewell@lshtm.ac.uk", role = "aut")
   )
-Description: Individual level Cycle Threshold Modelling
+Description: Cycle threshold modelling
 License: MIT + file LICENSE
 URL: https://samabbott.co.uk/epict/,
     https://github.com/seabbs/epict/

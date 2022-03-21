@@ -13,11 +13,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# epict
+# Cycle threshold modelling
 
 [![R-CMD-check](https://github.com/seabbs/epict/workflows/R-CMD-check/badge.svg)](https://github.com/seabbs/epict/actions)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Codecov test coverage](https://codecov.io/gh/seabbs/epict/branch/main/graph/badge.svg)](https://app.codecov.io/gh/seabbs/epict?branch=main)
+
 [![MIT
 license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/epiforecasts/epict/blob/master/LICENSE.md/)
 [![GitHub contributors](https://img.shields.io/github/contributors/seabbs/epict)](https://github.com/seabbs/epict/graphs/contributors) 
