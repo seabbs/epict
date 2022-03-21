@@ -25,6 +25,23 @@ summarise_coeff_pp <- function(fit, params, exponentiate = FALSE) {
   return(draws[])
 }
 
+summarise_draws <- function(draws, by = c("id", "time")) {
+  out <- data.table::copy(draws)
+  out <- out[,
+    .(
+      median = quantile(value, c(0.5), na.rm = TRUE),
+      lo90 = quantile(value, c(0.05), na.rm = TRUE),
+      lo60 = quantile(value, c(0.20), na.rm = TRUE),
+      lo30 = quantile(value, c(0.35), na.rm = TRUE),
+      hi30 = quantile(value, c(0.65), na.rm = TRUE),
+      hi60 = quantile(value, c(0.80), na.rm = TRUE),
+      hi90 = quantile(value, c(0.95), na.rm = TRUE)
+    ),
+    by = by
+  ]
+  return(out[])
+}
+
 summarise_effects <- function(draws, design, variables, exponentiate = TRUE) {
   eff_draws <- extract_coeffs(
     draws,
@@ -63,20 +80,4 @@ summarise_pp <- function(fit, obs) {
     by = c("id", "t", "obs")
   )
   return(ct_pp)
-}
-
-summarise_draws <- function(draws, by = c("id", "time")) {
-  out <- draws[,
-    .(
-      median = quantile(value, c(0.5), na.rm = TRUE),
-      lo90 = quantile(value, c(0.05), na.rm = TRUE),
-      lo60 = quantile(value, c(0.20), na.rm = TRUE),
-      lo30 = quantile(value, c(0.35), na.rm = TRUE),
-      hi30 = quantile(value, c(0.65), na.rm = TRUE),
-      hi60 = quantile(value, c(0.80), na.rm = TRUE),
-      hi90 = quantile(value, c(0.95), na.rm = TRUE)
-    ),
-    by = by
-  ]
-  return(out[])
 }

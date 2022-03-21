@@ -41,6 +41,15 @@ get_inc_period <- function(inc_mean = c(1.621, 0.0640),
   )
 }
 
+load_epict_model <- function() {
+  mod <- cmdstan_model(
+    "inst/stan/model.stan",
+    include_paths = "stan",
+    stanc_options = list("O1")
+  )
+  return(mod)
+}
+
 epict_to_stan <- function(obs,
                           ct_model = subject_design(~1, obs),
                           adjustment_model = test_design(~1, obs),
@@ -199,13 +208,4 @@ epict_inits <- function(dt) {
     }
     return(inits)
   }
-}
-
-load_epict_model <- function() {
-  mod <- cmdstan_model(
-    "inst/stan/model.stan",
-    include_paths = "stan",
-    stanc_options = list("O1")
-  )
-  return(mod)
 }

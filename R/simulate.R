@@ -141,5 +141,5 @@ simulate_obs <- function(obs = obs,
 
   ct_trajs <- index_by_first_positive(ct_trajs)
   ct_trajs[, onset_time := as.integer(onset_time - t_first_pos)]
-  return(ct_trajs)
+  return(ct_trajs[])
 }
