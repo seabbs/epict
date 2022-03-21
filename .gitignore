@@ -4,3 +4,4 @@
 .Rhistory
 inst/stan/model
 docs
+inst/doc

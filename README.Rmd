@@ -15,43 +15,78 @@ knitr::opts_chunk$set(
 
 # epict
 
-<!-- badges: start -->
 [![R-CMD-check](https://github.com/seabbs/epict/workflows/R-CMD-check/badge.svg)](https://github.com/seabbs/epict/actions)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Codecov test coverage](https://codecov.io/gh/seabbs/epict/branch/main/graph/badge.svg)](https://app.codecov.io/gh/seabbs/epict?branch=main)
-<!-- badges: end -->
+[![MIT
+license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/epiforecasts/epict/blob/master/LICENSE.md/)
+[![GitHub contributors](https://img.shields.io/github/contributors/seabbs/epict)](https://github.com/seabbs/epict/graphs/contributors) 
 
-The goal of epict is to ...
+
+
+This package contains tools to enable flexible and efficient ...
 
 ## Installation
 
-You can install the development version of epict like so:
+### Installing the package
 
-``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+Install the unstable development from GitHub using the following, 
+
+```{r, eval = FALSE}
+remotes::install_github("seabbs/epict", dependencies = TRUE)
 ```
 
-## Example
+### Installing CmdStan
 
-This is a basic example which shows you how to solve a common problem:
+If you don't already have CmdStan installed then, in addition to installing `epict`, it is also necessary to install CmdStan using CmdStanR's 
+`install_cmdstan()` function to enable model fitting in `epict`. A suitable C++ toolchain is also required. Instructions are provided in the [_Getting started with
+CmdStanR_](https://mc-stan.org/cmdstanr/articles/cmdstanr.html) vignette. See the [CmdStanR documentation](https://mc-stan.org/cmdstanr/) for further details and support. 
 
-```{r example}
+```{r, eval = FALSE}
+cmdstanr::install_cmdstan()
+```
+
+## Quick start
+
+
+### Package
+
+As well as `epict` this quick start makes use of `data.table` and `ggplot2` which are both installed when `epict` is installed.
+
+```{r}
 library(epict)
-## basic example code
+library(data.table)
+library(ggplot2)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+### Data
 
-```{r cars}
-summary(cars)
+
+### Data preprocessing and model specification
+
+
+### Model fitting
+
+### Results
+
+## Citation
+
+If using `epict` in your work please consider citing it using the following,
+
+```{r, echo = FALSE}
+citation("epict")
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
+## How to make a bug report or feature request
 
-You can also embed plots, for example:
+Please briefly describe your problem and what output you expect in an [issue](https://github.com/seabbs/epict/issues). If you have a question, please don't open an issue. Instead, ask on our [Q and A page](https://github.com/seabbs/epict/discussions/categories/q-a).
 
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
+## Contributing
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+We welcome contributions and new contributors! We particularly appreciate help on priority problems in the [issues](https://github.com/seabbs/epict/issues). Please check and add to the issues, and/or add a [pull request](https://github.com/seabbs/epict/pulls).
+
+If interested in expanding the functionality of the underlying model note that `epict` allows users to pass in their own models meaning that alternative parameterisations may be easily tested within the package infrastructure. Once this testing has been done alterations that increase the flexibility of the package model and improves its defaults are very welcome via pull request or other communication with the package authors.
+
+## Code of Conduct
+  
+Please note that the `epict` project is released with a [Contributor Code of Conduct](https://samabbott.co.uk/epict/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

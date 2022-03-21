@@ -1,4 +1,21 @@
-url: http://samabbott.co.uk/epict/
+url: samabbott.co.uk/epict/
 template:
   bootstrap: 5
+  package: preferably
+  params:
+    toggle: manual
+  twitter:
+    creator: "@seabbs"
+    card: summary_large_image
+  opengraph:
+    twitter: 
+      creator: "@seabbs"
+      card: summary_large_image
 
+
+development:
+  mode: release
+
+authors:
+  Sam Abbott:
+    href: "https://www.samabbott.co.uk/"
