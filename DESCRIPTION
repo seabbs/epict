@@ -42,3 +42,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Language: en-US
+SystemRequirements: CmdStan (>=2.28)
