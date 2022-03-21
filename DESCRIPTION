@@ -1,0 +1,39 @@
+Package: epict
+Title: Individual level Cycle Threshold Modelling
+Version: 0.1.0
+Authors@R: 
+    c(person(given = "Sam",
+             family = "Abbott",
+             role = c("aut", "cre"),
+             comment = c(ORCID = "0000-0001-8057-8037"),
+             email = "sam.abbott@lshtm.ac.uk"),
+      person(given = "Tim",
+             family = "Russell",
+             role = c("aut"),
+             email = "timothy.russell@lshtm.ac.uk"),
+      person(given = "Joel",
+             family = "Hellewell",
+             role = c("aut"),
+             email = "joel.hellewell@lshtm.ac.uk"))
+Description: Individual level Cycle Threshold Modelling
+License: MIT + file LICENSE
+Imports:
+    cmdstanr,
+    lubridate,
+    data.table,
+    ggplot2,
+    patchwork,
+    posterior,
+    stringr,
+    truncnorm,
+    magrittr,
+    forcats
+Additional_repositories: 
+    https://mc-stan.org/r-packages/
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
