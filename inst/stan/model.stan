@@ -1,3 +1,9 @@
+// Piecewise linear modelling of Cycle Thresholds
+// 
+// @licence MIT
+// @author Sam Abbott
+// @author Tim Russell
+// @author Joel Hellewell
 functions{ 
 #include functions/piecewise_ct.stan
 #include functions/combine_effects.stan

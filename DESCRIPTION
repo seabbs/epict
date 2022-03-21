@@ -1,39 +1,32 @@
 Package: epict
 Title: Individual level Cycle Threshold Modelling
 Version: 0.1.0
-Authors@R: 
-    c(person(given = "Sam",
-             family = "Abbott",
-             role = c("aut", "cre"),
-             comment = c(ORCID = "0000-0001-8057-8037"),
-             email = "sam.abbott@lshtm.ac.uk"),
-      person(given = "Tim",
-             family = "Russell",
-             role = c("aut"),
-             email = "timothy.russell@lshtm.ac.uk"),
-      person(given = "Joel",
-             family = "Hellewell",
-             role = c("aut"),
-             email = "joel.hellewell@lshtm.ac.uk"))
+Authors@R: c(
+    person("Sam", "Abbott", , "sam.abbott@lshtm.ac.uk", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-8057-8037")),
+    person("Tim", "Russell", , "timothy.russell@lshtm.ac.uk", role = "aut"),
+    person("Joel", "Hellewell", , "joel.hellewell@lshtm.ac.uk", role = "aut")
+  )
 Description: Individual level Cycle Threshold Modelling
 License: MIT + file LICENSE
+URL: http://samabbott.co.uk/epict/
 Imports:
     cmdstanr,
-    lubridate,
     data.table,
+    forcats,
     ggplot2,
+    lubridate,
+    magrittr,
     patchwork,
     posterior,
     stringr,
-    truncnorm,
-    magrittr,
-    forcats
-Additional_repositories: 
-    https://mc-stan.org/r-packages/
+    truncnorm
+Suggests: 
+    covr,
+    testthat (>= 3.0.0)
+Additional_repositories: https://mc-stan.org/r-packages/
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
-Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
