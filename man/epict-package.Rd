@@ -4,14 +4,16 @@
 \name{epict-package}
 \alias{epict}
 \alias{epict-package}
-\title{epict: Individual level Cycle Threshold Modelling}
+\title{epict: Cycle Threshold Modelling}
 \description{
-Individual level Cycle Threshold Modelling
+Cycle threshold modelling
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://samabbott.co.uk/epict/}
+  \item \url{https://samabbott.co.uk/epict/}
+  \item \url{https://github.com/seabbs/epict/}
+  \item Report bugs at \url{https://github.com/seabbs/epict/issues/}
 }
 
 }

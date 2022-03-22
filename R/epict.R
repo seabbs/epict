@@ -1,5 +1,24 @@
+#' @title Model Cycle Thresholds
+#'
+#' @description Provides a user friendly interface around package functionality
+#' to model cycle tresholds, and symptom onsets from observed preprocessed
+#' data, a piecewise linear model, and a global adjustment model.
+#'
+#' @param as_data_list PARAM_DESCRIPTION
+#'
+#' @param inits PARAM DESCRIPTION
+#'
+#'
+#' @param ... Additional arguments passed to [cmdstanr].
+#'
+#' @return A [cmdstanr] model fit containing posterior samples
+#'
+#' @inheritParams epict_to_stan
+#' @inheritParams epict_inits
+#' @family epict
+#' @export
 epict <- function(obs,
-                  model = load_epict_model(),
+                  model =  epict_model(),
                   as_data_list = epict_to_stan,
                   inits = epict_inits,
                   ct_model = subject_design(~1, obs),
@@ -25,5 +44,6 @@ epict <- function(obs,
     init = inits(stan_data),
     ...
   )
+  class(fit) <- c("epict", class(fit))
   return(fit)
 }
