@@ -1,38 +1,3 @@
-params_avail_to_adjust <- function(params = "all") {
-  choices <- c("t_p", "t_s", "t_lod", "c_p", "c_s", "inc_mean", "inc_sd")
-  params <- match.arg(params, c(choices, "all"), several.ok = TRUE)
-  if (any(params %in% "all")) {
-    params <- choices
-  }
-  params_list <- as.list(choices)
-  names(params_list) <- choices
-  params_list <- purrr::map(params_list, ~ as.numeric(any(params %in% .)))
-  return(params_list)
-}
-
-test_design <- function(formula = ~1, data, preds_sd = 1) {
-  design <- model.matrix(formula, data = data)
-
-  out <- list(
-    design = design, preds_sd = preds_sd
-  )
-  return(out)
-}
-
-subject_design <- function(formula = ~1, data, preds_sd = 0.1,
-                           params = "all") {
-  params <- params_avail_to_adjust(params)
-
-  subjects <- extract_subjects(data)
-  design <- model.matrix(formula, data = subjects)
-
-  out <- list(
-    design = design, subjects = subjects, params = params,
-    preds_sd = preds_sd
-  )
-  return(out)
-}
-
 #' Default model priors
 #'
 #'
