@@ -131,6 +131,6 @@ vector piecewise_ct(vector t, real c0, real cp, real cs,
         switch
       );
     }
-
+    
     return(ct);
   }
