@@ -151,7 +151,7 @@ transformed parameters {
 
   // Shift and scale ct values
   adj_exp_ct = combine_effects(0, beta_ct_shift, ct_design) +
-    exp(combine_effects(0, beta_ct_scale, ct_design)) .* exp_ct;
+    exp(combine_effects(0, beta_ct_scale, ct_design) + log(exp_ct));
 
   // Model symptom onset likelihood: see onsets_lmpf.stan
   if (any_onsets) {
