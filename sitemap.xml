@@ -31,6 +31,24 @@
     <loc>samabbott.co.uk/epict/reference/epict-package.html</loc>
   </url>
   <url>
+    <loc>samabbott.co.uk/epict/reference/epict.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/epict_inits.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/epict_model.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/epict_priors.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/epict_to_stan.html</loc>
+  </url>
+  <url>
     <loc>samabbott.co.uk/epict/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/pipe.html</loc>
   </url>
 </urlset>
