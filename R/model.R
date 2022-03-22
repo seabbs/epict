@@ -1,6 +1,5 @@
 #' Default model priors
 #'
-#'
 #' @return A data frame summarising the model priors.
 #'
 #' @importFrom data.table data.table

@@ -1,3 +1,24 @@
+// Symptom onset likelihood module
+// 
+// This function returns the log-likelihood for symptom onset
+// 
+// @param inc_mean The intercept of the incubation period mean
+//
+// @param inc_sd The intercept of the incubation period standard deviatio
+// 
+// @param beta_im A Vector of effects on the incubation period mean.
+// 
+// @param beta_is A Vector of effects on the incubation period standard
+// deviation.
+//
+// @param design The design matrix for the observations (rows) and effects
+// columns.
+// 
+// @return The log-likelihood per individual
+// 
+// @author Sam Abbott
+// @author Tim Russell
+// @author Joel Hellewell
 vector onsets_lmpf(real inc_mean, real inc_sd, vector beta_im, vector beta_is,
                    matrix design, vector onset_avail, vector onset_time, 
                    vector onset_window, vector inf_time, array[] int ids) {
