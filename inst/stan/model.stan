@@ -42,17 +42,19 @@ data {
   int ind_corr; // Should individual variation be modelled with correlation
   real lkj_prior; // LKJ prior for individual level variation
   int preds; // Number of predictors
+  real preds_mean; // Mean of predictors
   real preds_sd; // Standard deviation of predictor coeffs
   matrix[P, preds + 1] design; //Design matrix
   int adj_t_p; // Should time at peak be adjusted
   int adj_t_s; // Should time at switch be adjusted
-  int adj_t_lod; // Should time at LOD be adjusted
+  int adj_t_clear; // Should time at LOD be adjusted
   int adj_c_p; // Should CT at peak be adjusted
   int adj_c_s; // Should CT at switch be adjusted
   int adj_inc_mean; // Should incubation period mean be adjusted
   int adj_inc_sd; // Should incubation period standard deviation be adjusted
   int adj_ct; // Should cts be adjusted
   int ct_preds; // Number of predictors for CT adjustment
+  real ct_preds_mean; // Mean of CT predictor coeffs
   real ct_preds_sd; // Standard deviation of CT predictor coeffs
   matrix[N, ct_preds + 1] ct_design; // Design matrix for CT adjustment
   int likelihood;
@@ -72,23 +74,23 @@ transformed data {
 
 parameters {
   vector<lower = t_inf_bound>[P] t_inf; // Inferred time of infection
-  array[any_onsets] real inc_mean; //Incubation period mean
-  array[any_onsets] real<lower = 0> inc_sd; //Incubation period sd
-  real<lower = c_lod> c_0;   // Ct value before detection
+  array[any_onsets] real inc_mean_int; //Incubation period mean intercept
+  array[any_onsets] real<lower = 0> inc_sd_int; //Incubation period sd intercept
+  real<lower = c_lod> c_int;   // Ct value before and after infection
   // Cholesky_factored correlation matrix
   cholesky_factor_corr[ind_corr ? K : 0] L_Omega;
-  real c_p_mean; // Ct value of viral load p
-  array[switch] real c_s_mean; // Ct value at s
-  real t_p_mean; // Timing of peak
-  array[switch] real t_s_mean; // Timing of switch
-  real t_lod_mean; // Time viral load hits lower limit of detection
+  real c_p_int; // Intercept of Ct value of viral load at peak
+  array[switch] real c_s_int; // Intercept of Ct value at switch
+  real t_p_int; // Intercept of time at peak
+  array[switch] real t_s_int; // Intercept at time of switch
+  real t_clear_int; // Intercept of the time virus is cleared
   vector<lower = 0>[ind_var_m ? K : 0] ind_var; // SD of individual variation
   matrix[ind_var_m ? K : 0, P] ind_eta; // Individual level variation
   real<lower = 0> sigma; // Variance parameter for oobservation model
   // Coefficients
   vector[preds && adj_t_p ? preds : 0] beta_t_p;
   vector[preds && adj_t_s ? preds : 0] beta_t_s;
-  vector[preds && adj_t_lod ? preds : 0] beta_t_lod;
+  vector[preds && adj_t_clear ? preds : 0] beta_t_clear;
   vector[preds && adj_c_s ? preds : 0] beta_c_s;
   vector[preds && adj_c_p ? preds : 0] beta_c_p;
   vector[preds && adj_inc_mean ? preds : 0] beta_inc_mean;
@@ -98,7 +100,7 @@ parameters {
 }
 
 transformed parameters {
-  vector[P] t_p, t_s, t_lod, c_p, c_s, t_lod_abs;
+  vector[P] t_p, t_s, t_clear, c_p, c_s, t_clear_abs;
   vector[N] inf_rel, exp_ct, adj_exp_ct;
   array[nonsets] real onsets_star;
   vector[nonsets ? P :0] onsets_log_lik;
@@ -124,30 +126,30 @@ transformed parameters {
   }
 
   // Combine effects for each CT parameter and transform to required scale
-  t_p = exp(combine_effects(t_p_mean, beta_t_p, design) + eta[, 1]);
-  t_lod = exp(combine_effects(t_lod_mean, beta_t_lod, design) + eta[, 2]);
-  c_p = inv_logit(combine_effects(c_p_mean, beta_c_p, design) + eta[, 3]);
+  t_p = exp(combine_effects(t_p_int, beta_t_p, design) + eta[, 1]);
+  t_clear = exp(combine_effects(t_clear_int, beta_t_clear, design) + eta[, 2]);
+  c_p = inv_logit(combine_effects(c_p_int, beta_c_p, design) + eta[, 3]);
   // Optional effects if a second breakpoint is used
   if (switch) {
-    t_s = exp(combine_effects(t_s_mean[1], beta_t_s, design) + eta[, 4]);
-    c_s = c_0 * inv_logit(
-      combine_effects(c_s_mean[1], beta_c_s, design) + eta[, 5]
+    t_s = exp(combine_effects(t_s_int[1], beta_t_s, design) + eta[, 4]);
+    c_s = c_int * inv_logit(
+      combine_effects(c_s_int[1], beta_c_s, design) + eta[, 5]
     );
     c_p = c_s .* c_p;
   }else{
     c_s = rep_vector(0.0, P);
     t_s = rep_vector(0.0, P);
-    c_p = c_0 * c_p;
+    c_p = c_int * c_p;
   }
 }
   // Make times absolute
-  t_lod_abs = t_p + t_s + t_lod;
+  t_clear_abs = t_p + t_s + t_clear;
   // Adjust observed times since first test to be time since infection
   inf_rel = day_rel + t_inf[id];
 
   // Expected ct value given viral load parameters
   exp_ct = piecewise_ct_by_id(
-    inf_rel, c_0, c_p, c_s, c_0, t_e, t_p, t_s, t_lod_abs, id,
+    inf_rel, c_int, c_p, c_s, c_int, t_e, t_p, t_s, t_clear_abs, id,
     tests_per_id, cum_tests_per_id, switch
   );
 
@@ -177,13 +179,13 @@ model {
   t_inf ~ normal(t_inf_bound + 5, 5); 
   
   // CT piecewise linear intercept parameters
-  c_0 ~ normal(c_lod + 10, 5) T[c_lod, ];
-  c_p_mean ~ normal(0, 1); //mean at 50% of switch value
-  t_p_mean ~ normal(1.61, 0.5); //mean at log(5)
-  t_lod_mean ~ normal(2.3, 0.5); //mean at log(10) + peak + scale timing 
+  c_int ~ normal(c_lod + 10, 5) T[c_lod, ];
+  c_p_int ~ normal(0, 1); //mean at 50% of switch value
+  t_p_int ~ normal(1.61, 0.5); //mean at log(5)
+  t_clear_int ~ normal(2.3, 0.5); //mean at log(10) + peak + scale timing 
   if (switch) {
-    c_s_mean ~ normal(0, 1); //mean at 50% of maximum ct
-    t_s_mean ~ normal(1.61, 0.5); //mean at log(5) + peak timing
+    c_s_int ~ normal(0, 1); //mean at 50% of maximum ct
+    t_s_int ~ normal(1.61, 0.5); //mean at log(5) + peak timing
   }
 
   // Individual level variation
@@ -208,8 +210,8 @@ model {
     if (adj_t_s) {
       beta_t_s ~ normal(0, preds_sd);
     }
-    if (adj_t_lod) {
-      beta_t_lod ~ normal(0, preds_sd);
+    if (adj_t_clear) {
+      beta_t_clear ~ normal(0, preds_sd);
     }
     if (adj_c_p) {
       beta_c_p ~ normal(0, preds_sd);

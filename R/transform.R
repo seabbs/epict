@@ -6,16 +6,16 @@ transform_to_model <- function(draws) {
   }
 
   if (is.null(draws[["c_s"]])) {
-    draws[, c_s := c_0]
+    draws[, c_s := c_int]
   }
   draws[
     ,
     `:=`(
       t_p = exp(t_p),
       t_s = exp(t_s),
-      t_lod = exp(t_lod),
-      c_0 = c_0,
-      c_s = c_0 * plogis(c_s)
+      t_clear = exp(t_clear),
+      c_int = c_int,
+      c_s = c_int * plogis(c_s)
     )
   ][
     ,
@@ -28,7 +28,7 @@ transform_to_natural <- function(draws) {
   draws <- transform_to_model(draws)
   draws[
     ,
-    t_lod := t_p + t_s + t_lod
+    t_clear := t_p + t_s + t_clear
   ][
     ,
     t_s := t_p + t_s,

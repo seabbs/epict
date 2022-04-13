@@ -20,9 +20,9 @@ extract_params <- function(draws, params, by) {
   return(draws[])
 }
 extract_ct_params <- function(draws, params = c(
-                                "c_0", "c_p_mean",
-                                "c_s_mean[1]", "t_p_mean",
-                                "t_s_mean[1]", "t_lod_mean"
+                                "c_int", "c_p_int",
+                                "c_s_int[1]", "t_p_int",
+                                "t_s_int[1]", "t_clear_mean"
                               ),
                               mean = TRUE, by) {
   if (!mean) {

@@ -1,5 +1,5 @@
 params_avail_to_adjust <- function(params = "all") {
-  choices <- c("t_p", "t_s", "t_lod", "c_p", "c_s", "inc_mean", "inc_sd")
+  choices <- c("t_p", "t_s", "t_clear", "c_p", "c_s", "inc_mean", "inc_sd")
   params <- match.arg(params, c(choices, "all"), several.ok = TRUE)
   if (any(params %in% "all")) {
     params <- choices

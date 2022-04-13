@@ -6,12 +6,13 @@
 #' @family model
 #' @export
 #' @examples
+#' @author Sam Abbott
 #' epict_priors()
 epict_priors <- function() {
   data.table::data.table(
     variable = c(
-      "eobs_lsd",
-      "logmean_int",
+      "t_inf",
+      "c_int",
       "logsd_int",
       "logmean_sd",
       "logsd_sd",
@@ -19,8 +20,10 @@ epict_priors <- function() {
       "sqrt_phi"
     ),
     description = c(
-      "Standard deviation for expected final observations",
-      "Log mean intercept for reference date delay",
+      "Days between infection and first positive test (offset by onset if
+      available",
+      "Latent limit of Cycle threshold detection (offset by user specified
+      limit of detection",
       "Log standard deviation for the reference date delay",
       "Standard deviation of scaled pooled logmean effects",
       "Standard deviation of scaled pooled logsd effects",
@@ -28,16 +31,16 @@ epict_priors <- function() {
       "One over the square of the reporting overdispersion"
     ),
     distribution = c(
-      "Zero truncated normal",
-      "Normal",
+      "Normal (truncated by onset or 0)",
+      "Normal (truncated by user specified limit of detecton)",
       "Zero truncated normal",
       "Zero truncated normal",
       "Zero truncated normal",
       "Zero truncated normal",
       "Zero truncated normal"
     ),
-    mean = c(0, 1, 0.5, rep(0, 4)),
-    sd = rep(1, 7)
+    mean = c(5, 10),
+    sd = 5, 10, 
   )
 }
 
@@ -83,7 +86,7 @@ epict_to_stan <- function(obs,
     uncensored = obs[uncensored == 1, obs],
     uncensored_by_test = obs[, uncensored],
     t_e = 0,
-    c_0 = censoring_threshold,
+    c_int = censoring_threshold,
     c_lod = censoring_threshold,
     K = ifelse(switch, 5, 3),
     ind_var_sd = individual_variation,
@@ -103,7 +106,7 @@ epict_to_stan <- function(obs,
     switch = as.numeric(switch),
     adj_t_p = ct_model$params[["t_p"]],
     adj_t_s = min(ct_model$params[["t_s"]], as.numeric(switch)),
-    adj_t_lod = ct_model$params[["t_lod"]],
+    adj_t_clear = ct_model$params[["t_clear"]],
     adj_c_p = ct_model$params[["c_p"]],
     adj_c_s = min(ct_model$params[["c_s"]], as.numeric(switch)),
     adj_inc_mean = ct_model$params[["inc_mean"]],
@@ -167,21 +170,21 @@ epict_inits <- function(data) {
           mean = max(-data$onset_time[.] + 5, 5), sd = 1
         )
       ),
-      c_0 = truncnorm::rtruncnorm(
+      c_int = truncnorm::rtruncnorm(
         1,
         a = data$c_lod, mean = data$c_lod + 10, sd = 1
       ),
-      c_p_mean = rnorm(1, 0, 1),
-      t_p_mean = rnorm(1, 1.61, 0.5),
-      t_lod_mean = rnorm(1, 2.3, 0.5),
+      c_p_int = rnorm(1, 0, 1),
+      t_p_int = rnorm(1, 1.61, 0.5),
+      t_clear_mean = rnorm(1, 2.3, 0.5),
       ind_var = abs(rnorm(data$K, 0, data$ind_var_sd * 0.1)),
       ind_eta = matrix(rnorm(data$P * data$K, 0, 0.1), nrow = data$K, ncol = data$P),
       sigma = truncnorm::rtruncnorm(1, a = 0, mean = 5, sd = 0.5)
     )
 
     if (data$switch > 0) {
-      inits$c_s_mean <- array(rnorm(1, 0, 1))
-      inits$t_s_mean <- array(rnorm(1, 1.61, 0.5))
+      inits$c_s_int <- array(rnorm(1, 0, 1))
+      inits$t_s_int <- array(rnorm(1, 1.61, 0.5))
     }
 
     if (data$preds > 0) {
@@ -191,8 +194,8 @@ epict_inits <- function(data) {
       if (data$adj_t_s > 0) {
         inits$beta_t_s <- rnorm(data$preds, 0, 0.01)
       }
-      if (data$adj_t_lod > 0) {
-        inits$beta_t_lod <- rnorm(data$preds, 0, 0.01)
+      if (data$adj_t_clear > 0) {
+        inits$beta_t_clear <- rnorm(data$preds, 0, 0.01)
       }
       if (data$adj_c_p > 0) {
         inits$beta_c_p <- rnorm(data$preds, 0, 0.01)
