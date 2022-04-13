@@ -99,7 +99,50 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">epict_priors</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in data.table::data.table(variable = c("t_inf", "c_int", "logsd_int",     "logmean_sd", "logsd_sd", "rd_eff_sd", "sqrt_phi"), description = c("Days between infection and first positive test (offset by onset if\n      available",     "Latent limit of Cycle threshold detection (offset by user specified\n      limit of detection",     "Log standard deviation for the reference date delay", "Standard deviation of scaled pooled logmean effects",     "Standard deviation of scaled pooled logsd effects", "Standard deviation of scaled pooled report date effects",     "One over the square of the reporting overdispersion"), distribution = c("Normal (truncated by onset or 0)",     "Normal (truncated by user specified limit of detecton)",     "Zero truncated normal", "Zero truncated normal", "Zero truncated normal",     "Zero truncated normal", "Zero truncated normal"), mean = c(5,     10), sd = 5, 10, ):</span> argument is missing, with no default</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     variable                                           name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:    t_inf Time between infection and first positive test</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    c_int                          Latent upper Ct bound</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:      c_p                                        Peak Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:      t_p                                Time at peak Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      c_s                                      Switch Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:      t_s                              Time at switch Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:  t_clear                 Time at clearance of infection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: inc_mean                  Mean of the incubation period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   inc_sd    Standard deviation of the incubation period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    sigma                 Observation standard deviation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                           detail</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                 Offset by onset if available</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:               Offset by user specified limit of Ct detection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: Logit scale offset by latent limit of detection/Ct at switch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                    Log scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:              Logit scale offset by latent limit of detection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                    Log scale relative to the time at peak Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                        Relative to time at peak and switch C</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                   Parameterised as a log-normal distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                   Parameterised as a log-normal distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                Assuming a normal error model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                distribution intercept_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                        Normal (truncated by onset or 0)           5.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: Normal (truncated by user specified limit of detection)          10.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                  Normal           0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                  Normal           1.61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                  Normal           0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                  Normal           1.61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                  Normal           2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                  Normal           1.62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                   Zero truncated normal           0.42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                   Zero truncated normal           0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     intercept_sd individual_variation_mean individual_variation_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:         5.00                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:        10.00                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:         1.00                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:         0.50                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:         1.00                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:         0.50                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:         0.50                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:         0.06                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:         0.07                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:         2.00                        NA                      NA</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
