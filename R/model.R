@@ -82,6 +82,7 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
 epict_to_stan <- function(obs,
                           ct_model = subject_design(~1, obs),
                           adjustment_model = test_design(~1, obs),
+                          priors = epict::epict_priors(),
                           individual_variation = 0.2,
                           individual_correlation = 1,
                           censoring_threshold = 40, switch = TRUE,

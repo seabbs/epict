@@ -78,6 +78,55 @@ epict_formula_as_data_list <- function(data, ct_model, adjustment_model) {
   return(fdata)
 }
 
+#' FUNCTION_TITLE
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param priors DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @family modeltools
+#' @importFrom data.table copy
+#' @importFrom purrr map
+#' @export
+#' @examples
+#' priors <- epict_priors()
+#' epict_population_priors_as_data_list(priors)
+epict_population_priors_as_data_list <- function(priors) {
+  priors <- data.table::copy(priors)
+  priors[, variable := paste0(variable, "_p")]
+  priors <- priors[, .(variable, intercept_mean, intercept_sd)]
+  priors <- split(priors, by = "variable", keep.by = FALSE)
+  priors <- purrr::map(priors, ~ as.vector(t(.)))
+  return(priors)
+}
+
+#' FUNCTION_TITLE
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param priors DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @family modeltools
+#' @importFrom data.table copy
+#' @importFrom purrr map
+#' @export
+#' @examples
+#' priors <- epict_priors()
+#' epict_individual_priors_as_data_list(priors)
+epict_individual_priors_as_data_list <- function(priors) {
+  priors <- data.table::copy(priors)
+  priors[, variable := paste0(variable, "_p")]
+  priors <- priors[!is.na(individual_variation_mean)]
+  priors <- priors[, 
+    .(variable, individual_variation_mean, individual_variation_sd)
+  ]
+  priors <- list(ind_var_mean = priors$individual_variation_mean,
+                 ind_var_sd = priors$individual_variation_sd)
+  return(priors)
+}
+
 #' Format model options for use with stan
 #'
 #' @param pp Logical, defaults to `FALSE`. Should posterior predictions be made
@@ -109,29 +158,6 @@ epict_opts_as_data_list <- function(pp = FALSE, likelihood = TRUE,
   return(data)
 }
 
-#' FUNCTION_TITLE
-#'
-#' FUNCTION_DESCRIPTION
-#'
-#' @param priors DESCRIPTION.
-#'
-#' @return RETURN_DESCRIPTION
-#' @family modeltools
-#' @importFrom data.table copy
-#' @importFrom purrr map
-#' @export
-#' @examples
-#' priors <- epict_priors()
-#' epict_priors_as_data_list(priors)
-epict_priors_as_data_list <- function(priors) {
-  priors <- data.table::copy(priors)
-  priors[, variable := paste0(variable, "_p")]
-  priors <- priors[, .(variable, mean, sd)]
-  priors <- split(priors, by = "variable", keep.by = FALSE)
-  priors <- purrr::map(priors, ~ as.vector(t(.)))
-  return(priors)
-}
-
 #' Extract summarised posteriors to use as priors
 #'
 #' Extract and summarise posteriors from a [epict()] to use as
@@ -146,6 +172,10 @@ epict_priors_as_data_list <- function(priors) {
 #' @param variables A character vector of variables both in the
 #' posterior and in the default priors.
 #'
+#' @param sub A character string indicating the part of variable names in the
+#' posterior to remove. This can be used to link variable names in the model
+#' object to those expected as input.
+#' 
 #' @param scale Numeric, defaults to 5. Amount to scale posterior standard
 #' deviations by.
 #'
@@ -154,10 +184,11 @@ epict_priors_as_data_list <- function(priors) {
 #' @importFrom data.table setDT
 #' @export
 epict_posterior_as_prior <- function(fit, priors = epict::epict_priors(),
-                                     variables = c(), scale = 5) {
+                                     variables = c(), sub = "_int",  scale = 5) {
   posteriors <- fit$summary(variables)
   posteriors <- setDT(posteriors)[, sd := sd * scale]
   posteriors <- posteriors[, .(variable, mean, sd)]
+  posteriors <- posteriors[, variable := gsub(sub, "", variable)]
   priors <- priors[!(variable %in% variables)]
   priors <- rbind(priors, posteriors, fill = TRUE)
   return(priors[])
