@@ -8,15 +8,9 @@
 	"settings": {
 		"r.rterm.linux": "/usr/local/bin/radian",
 		"r.bracketedPaste": true,
-		"r.plot.useHttpgd": true,
+		"r.sessionWatcher": true,
 		"[r]": {
 			"editor.wordSeparators": "`~!@#%$^&*()-=+[{]}\\|;:'\",<>/?"
-		},
-		"terminal.integrated.profiles.linux": {
-			"radian": {
-	dock			"path": "/usr/local/bin/radian",
-				"overrideName": true
-			}
 		}
 	},
 
@@ -35,5 +29,5 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "Rscript -e 'cmdstanr::set_cmdstan_path();"
+	"postCreateCommand": "Rscript -e 'cmdstanr::set_cmdstan_path();'"
 }
