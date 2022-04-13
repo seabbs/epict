@@ -13,6 +13,10 @@ functions{
 }
 
 data {
+  // Observations and indexing parameters
+  // User specified population-level parameters
+  // User specified covariate parameters
+  // Model control parameters
   int P; // number of patients
   int N; // number of tests
   array[N] int id; // id of person
@@ -63,31 +67,41 @@ data {
 
 transformed data {
   vector[P] t_inf_bound;
+  vector[P] t_inf_mean;
   vector[61] sim_times;
+  real c_int_mean;
   for (i in 1:P) {
     t_inf_bound[i] = max({-onset_time[i], 0});
   }
+  t_inf_mean = t_inf_bound + t_inf_p[1];
+  ct_int_mean = c_lod + c_int_p[1];
   for (i in 0:60) {
     sim_times[i + 1] = i;
   }
 }
 
 parameters {
+  // Individual-level parameters
   vector<lower = t_inf_bound>[P] t_inf; // Inferred time of infection
-  array[any_onsets] real inc_mean_int; //Incubation period mean intercept
-  array[any_onsets] real<lower = 0> inc_sd_int; //Incubation period sd intercept
-  real<lower = c_lod> c_int;   // Ct value before and after infection
   // Cholesky_factored correlation matrix
   cholesky_factor_corr[ind_corr ? K : 0] L_Omega;
+
+  // Population-level parameters
+  real<lower = c_lod> c_int;   // Ct value before and after infection
   real c_p_int; // Intercept of Ct value of viral load at peak
   array[switch] real c_s_int; // Intercept of Ct value at switch
+  array[any_onsets] real inc_mean_int; //Incubation period mean intercept
+  array[any_onsets] real<lower = 0> inc_sd_int; //Incubation period sd intercept
+  
+
+
   real t_p_int; // Intercept of time at peak
   array[switch] real t_s_int; // Intercept at time of switch
   real t_clear_int; // Intercept of the time virus is cleared
   vector<lower = 0>[ind_var_m ? K : 0] ind_var; // SD of individual variation
   matrix[ind_var_m ? K : 0, P] ind_eta; // Individual level variation
   real<lower = 0> sigma; // Variance parameter for oobservation model
-  // Coefficients
+  // Covariate Coefficients
   vector[preds && adj_t_p ? preds : 0] beta_t_p;
   vector[preds && adj_t_s ? preds : 0] beta_t_s;
   vector[preds && adj_t_clear ? preds : 0] beta_t_clear;
@@ -144,6 +158,7 @@ transformed parameters {
 }
   // Make times absolute
   t_clear_abs = t_p + t_s + t_clear;
+
   // Adjust observed times since first test to be time since infection
   inf_rel = day_rel + t_inf[id];
 
@@ -176,22 +191,23 @@ model {
   // Prior over possible infection times relative to first
   // positive test or symtom onset.
   // Assumes that the first positive test is not a false positive.
-  t_inf ~ normal(t_inf_bound + 5, 5); 
+  t_inf ~ normal(t_inf_mean, t_inf_p[2]); 
   
   // CT piecewise linear intercept parameters
-  c_int ~ normal(c_lod + 10, 5) T[c_lod, ];
-  c_p_int ~ normal(0, 1); //mean at 50% of switch value
-  t_p_int ~ normal(1.61, 0.5); //mean at log(5)
-  t_clear_int ~ normal(2.3, 0.5); //mean at log(10) + peak + scale timing 
+  c_int ~ normal(c_int_mean, c_int_p[2]) T[c_lod, ];
+  c_p_int ~ normal(c_p_int_p[1], c_p_int_p[2]); // Mean at 50% of switch value
+  t_p_int ~ normal(t_p_int_p[1], t_p_int_p[2]); // Mean at log(5)
+  //mean at log(10) + peak + scale timing 
+  t_clear_int ~ normal(t_clear_int_p[1], t_clear_int_p[2]); 
   if (switch) {
-    c_s_int ~ normal(0, 1); //mean at 50% of maximum ct
-    t_s_int ~ normal(1.61, 0.5); //mean at log(5) + peak timing
+    c_s_int ~ normal(c_s_int_p[1], c_s_int_p[2]); //mean at 50% of maximum ct
+    t_s_int ~ normal(t_s_int_p[1], t_s_int_p[2]); //mean at log(5) + peak timing
   }
 
   // Individual level variation
   if (ind_var_m) {
     to_vector(ind_eta) ~ std_normal();
-    ind_var ~ normal(0, ind_var_sd);
+    ind_var ~ normal(ind_var_mean, ind_var_sd);
   }
 
   // LKJ prior on correlation between individual level dynamics
@@ -200,41 +216,41 @@ model {
   }
 
   // Variation in observation model
-  sigma ~ normal(0, 2) T[0,];
+  sigma ~ normal(sigma_p[1], sigma_p[2]) T[0,];
 
   // Coefficients priors for predictors
   if (preds) {
     if (adj_t_p) {
-      beta_t_p ~ normal(0, preds_sd);
+      beta_t_p ~ normal(beta_t_p_m, beta_t_p_sd);
     }
     if (adj_t_s) {
-      beta_t_s ~ normal(0, preds_sd);
+      beta_t_s ~ normal(beta_t_s_m, beta_t_s_sd);
     }
     if (adj_t_clear) {
-      beta_t_clear ~ normal(0, preds_sd);
+      beta_t_clear ~ normal(beta_t_clear_m], beta_t_clear_sd);
     }
     if (adj_c_p) {
-      beta_c_p ~ normal(0, preds_sd);
+      beta_c_p ~ normal(beta_c_p_m, beta_c_p_sd);
     }
     if (adj_c_s) {
-      beta_c_s ~ normal(0, preds_sd);
+      beta_c_s ~ normal(beta_c_s_m, beta_c_s_sd);
     }
     if (adj_inc_mean) {
-      beta_inc_mean ~ normal(0, preds_sd);
+      beta_inc_mean ~ normal(beta_inc_mean_m, beta_inc_mean_sd);
     } 
     if (adj_inc_sd) {
-      beta_inc_sd ~ normal(0, preds_sd);
+      beta_inc_sd ~ normal(beta_inc_sd_m, beta_inc_sd_sd);
     } 
   }
   if (ct_preds && adj_ct) {
-    beta_ct_shift ~ normal(0, ct_preds_sd);
-    beta_ct_scale ~ normal(0, ct_preds_sd);
+    beta_ct_shift ~ normal(beta_ct_shift_m, beta_ct_shift_sd);
+    beta_ct_scale ~ normal(beta_ct_scale_m, beta_ct_scale_sd);
   }
 
   if (any_onsets) {
     // Priors on the incubation period
-    inc_mean ~ normal(lmean[1], lmean[2]);
-    inc_sd[1] ~ normal(lsd[1], lsd[2]) T[0, ];
+    inc_mean ~ normal(inc_mean_int[1], inc_mean_int[2]);
+    inc_sd[1] ~ normal(inc_sd_int[1], inc_sd_int[2]) T[0, ];
  
     if (likelihood) {
       // Component of likelihood for symptom onsets see onsets_lpmf.stan

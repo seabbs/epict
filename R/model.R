@@ -8,49 +8,70 @@
 #' @examples
 #' @author Sam Abbott
 #' epict_priors()
-epict_priors <- function() {
-  data.table::data.table(
+epict_priors <- function(individual_variation = c(0, 0.05)) {
+  priors <- data.table::data.table(
     variable = c(
       "t_inf",
       "c_int",
-      "logsd_int",
-      "logmean_sd",
-      "logsd_sd",
-      "rd_eff_sd",
-      "sqrt_phi"
+      "c_p",
+      "t_p",
+      "c_s",
+      "t_s",
+      "t_clear",
+      "inc_mean",
+      "inc_sd",
+      "sigma"
     ),
-    description = c(
-      "Days between infection and first positive test (offset by onset if
-      available",
-      "Latent limit of Cycle threshold detection (offset by user specified
-      limit of detection",
-      "Log standard deviation for the reference date delay",
-      "Standard deviation of scaled pooled logmean effects",
-      "Standard deviation of scaled pooled logsd effects",
-      "Standard deviation of scaled pooled report date effects",
-      "One over the square of the reporting overdispersion"
+    name = c(
+      "Time between infection and first positive test",
+      "Latent upper Ct bound",
+      "Peak Ct",
+      "Time at peak Ct",
+      "Switch Ct",
+      "Time at switch Ct",
+      "Time at clearance of infection",
+      "Mean of the incubation period",
+      "Standard deviation of the incubation period",
+      "Observation standard deviation"
+    ),
+    detail = c(
+      "Offset by onset if available",
+      "Offset by user specified limit of Ct detection",
+      "Logit scale offset by latent limit of detection/Ct at switch",
+      "Log scale",
+      "Logit scale offset by latent limit of detection",
+      "Log scale relative to the time at peak Ct",
+      "Relative to time at peak and switch C",
+      "Parameterised as a log-normal distribution",
+      "Parameterised as a log-normal distribution",
+      "Assuming a normal error model"
     ),
     distribution = c(
       "Normal (truncated by onset or 0)",
-      "Normal (truncated by user specified limit of detecton)",
-      "Zero truncated normal",
-      "Zero truncated normal",
-      "Zero truncated normal",
+      "Normal (truncated by user specified limit of detection)",
+      "Normal",
+      "Normal",
+      "Normal",
+      "Normal",
+      "Normal",
+      "Normal",
       "Zero truncated normal",
       "Zero truncated normal"
     ),
-    mean = c(5, 10),
-    sd = 5, 10, 
+    intercept_mean = c(5, 10, 0, 1.61, 0, 1.61, 2.3, 1.62, 0.42, 0),
+    intercept_sd = c(5, 10, 1, 0.5, 1, 0.5, 0.5, 0.06, 0.07, 2)
   )
+
+  priors[, `:=`(
+    individual_variation_mean = individual_variation[1],
+    individual_variation_sd = individual_variation[2]
+  )]
+
+  priors[variable %in% c("sigma", "c_int"), individual_variation_mean := NA]
+  priors[variable %in% c("sigma", "c_int"), individual_variation_sd := NA]
+  return(priors[])
 }
 
-get_inc_period <- function(inc_mean = c(1.621, 0.0640),
-                           inc_sd = c(0.418, 0.0691)) {
-  list(
-    inc_mean_p = inc_mean,
-    inc_sd_p = inc_sd
-  )
-}
 
 #' Format data for use with stan
 #'
