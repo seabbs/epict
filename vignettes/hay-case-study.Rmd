@@ -1,0 +1,30 @@
+---
+title: "Case study: Hay et al."
+description: "We reanalyse data from Hay et al. using epict. First replicating the results of the paper and then exploring additional questions using the flexibility of epict."
+author: Sam Abbott
+output: rmarkdown::html_document
+bibliography: library.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-numeric-superscript-brackets.csl
+vignette: >
+  %\VignetteIndexEntry{Model definition and implementation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+We reanalyse data from Hay et al. using `epict`. First replicating the results of the paper and then exploring additional questions using the flexibility of epict.
+
+# Data 
+
+# Replication of variant effect estimates from Hay et al.
+
+# Adjusting for reinfections
+
+# References
