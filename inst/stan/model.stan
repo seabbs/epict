@@ -161,7 +161,6 @@ transformed parameters {
       eta = rep_matrix(0, P, K);
     }
   }
-
   // Combine effects for each CT parameter and transform to required scale
   t_p = exp(combine_effects(t_p_int, beta_t_p, design) + eta[, 1]);
   t_clear = exp(combine_effects(t_clear_int, beta_t_clear, design) + eta[, 2]);
@@ -181,24 +180,19 @@ transformed parameters {
 }
   // Make times absolute
   t_clear_abs = t_p + t_s + t_clear;
-
   // Adjust observed times since first test to be time since infection
   inf_rel = day_rel + t_inf[id];
-
   // Expected ct value given viral load parameters
   exp_ct = piecewise_ct_by_id(
     inf_rel, c_int, c_p, c_s, c_int, 0, t_p, t_s, t_clear_abs, id,
     tests_per_id, cum_tests_per_id, switch
   );
-
   // Shift and scale ct values
   adj_exp_ct = combine_effects(0, beta_ct_shift, ct_design) +
     exp(combine_effects(0, beta_ct_scale, ct_design) + log(exp_ct));
-
   // Model symptom onset likelihood: see onsets_lmpf.stan
   if (any_onsets) {
     vector[P] onsets_ttar;
-  
     onsets_ttar = onsets_lmpf(
       inc_mean_int[1], inc_sd_int[1], beta_inc_mean, beta_inc_sd, design,
       onset_avail, onset_time, onset_window, t_inf, ids_with_onsets
