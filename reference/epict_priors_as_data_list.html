@@ -104,28 +104,9 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">priors</span> <span class="op">&lt;-</span> <span class="fu"><a href="epict_priors.html">epict_priors</a></span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in data.table::data.table(variable = c("t_inf", "c_int", "logsd_int",     "logmean_sd", "logsd_sd", "rd_eff_sd", "sqrt_phi"), description = c("Days between infection and first positive test (offset by onset if\n      available",     "Latent limit of Cycle threshold detection (offset by user specified\n      limit of detection",     "Log standard deviation for the reference date delay", "Standard deviation of scaled pooled logmean effects",     "Standard deviation of scaled pooled logsd effects", "Standard deviation of scaled pooled report date effects",     "One over the square of the reporting overdispersion"), distribution = c("Normal (truncated by onset or 0)",     "Normal (truncated by user specified limit of detecton)",     "Zero truncated normal", "Zero truncated normal", "Zero truncated normal",     "Zero truncated normal", "Zero truncated normal"), mean = c(5,     10), sd = 5, 10, ):</span> argument is missing, with no default</span>
 <span class="r-in"><span class="fu">epict_priors_as_data_list</span><span class="op">(</span><span class="va">priors</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $eobs_lsd_p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $logmean_int_p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $logsd_int_p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5 1.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $logmean_sd_p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $logsd_sd_p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $rd_eff_sd_p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $sqrt_phi_p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in data.table::copy(priors):</span> object 'priors' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
