@@ -14,18 +14,11 @@ functions{
 
 data {
   // Observations and indexing parameters
-  // User specified population-level parameters
-  // User specified covariate parameters
-  // Model control parameters
   int P; // number of patients
   int N; // number of tests
   array[N] int id; // id of person
   array[P] int tests_per_id; // Tests per ID
   array[P] int cum_tests_per_id; // Cumulative tests per id
-  real c_lod; // Ct value at limit of detection 
-  real t_e; 
-  array[2] real lmean; // mean of incubation period used (+ sd)
-  array[2] real lsd; // standard deviation of incubation period used (+ sd)
   int ncensored; // Number of censored tests
   array[ncensored] int censored; // Which tests have been censored
   int nuncensored; // Number of uncensored tests
@@ -39,16 +32,19 @@ data {
   vector[P] onset_time; // Time of onset per ID
   vector[P] onset_window; // Window in which onsets could have occurred per ID
   array[nonsets] int ids_with_onsets; // IDs that have onsets
-  int K; //Number of parameters with individual level variation
+  // User specified population-level parameters
   int switch; //Should a secondary breakpoint in the CT curve be modelled
-  int ind_var_m; // Should inividual variation be modelled
-  real ind_var_sd; // Standard deviation of inividual variation to be modelled
-  int ind_corr; // Should individual variation be modelled with correlation
-  real lkj_prior; // LKJ prior for individual level variation
-  int preds; // Number of predictors
-  real preds_mean; // Mean of predictors
-  real preds_sd; // Standard deviation of predictor coeffs
-  matrix[P, preds + 1] design; //Design matrix
+  real c_lod; // Ct value at limit of detection (censoring Ct value)
+  array[2] real c_int_p; // Prior on initial/final Ct value
+  array[2] real sigma_p; // Prior on the observation error
+  array[2] real c_p_p; // intercept of peak Ct (mean + sd)
+  array[2] real t_p_p; // intercept of time at peak Ct (mean + sd)
+  array[2] real c_s_p; // intercept of switch Ct (mean + sd)
+  array[2] real t_s_p; // intercept of time at switch Ct (mean + sd)
+  array[2] real t_clear_p; // intercept of time at which cleared (mean + sd)
+  array[2] real inc_mean_p; // mean of incubation period (mean + sd)
+  array[2] real inc_sd_p; // standard deviation of incubation period (mean + sd)
+  // User specified covariate parameters - what should be included
   int adj_t_p; // Should time at peak be adjusted
   int adj_t_s; // Should time at switch be adjusted
   int adj_t_clear; // Should time at LOD be adjusted
@@ -56,13 +52,36 @@ data {
   int adj_c_s; // Should CT at switch be adjusted
   int adj_inc_mean; // Should incubation period mean be adjusted
   int adj_inc_sd; // Should incubation period standard deviation be adjusted
+  // User specified covariate parameters - model design
+  int preds; // Number of predictors
+  matrix[P, preds + 1] design; //Design matrix
+  // User specified covariate parameters - priors
+  vector[preds] beta_c_p_m; // Mean of Ct shifts effects
+  vector[preds] beta_c_p_s; // Standard deviation of Ct shifts effects
+  vector[preds] beta_t_p_m; // Mean of Ct shifts effects
+  vector[preds] beta_t_p_s; // Standard deviation of Ct shifts effects
+  vector[preds] beta_c_s_m; // Mean of Ct shifts effects
+  vector[preds] beta_t_s_s; // Standard deviation of Ct shifts effects
+  vector[preds] beta_t_clear_m; // Mean of Ct shifts effects
+  // Individual-level parameters
+  int K; //Number of parameters with individual level variation
+  int ind_var_m; // Should inividual variation be modelled
+  vector[K] ind_var_mean; // Mean of individual variation
+  vector[K] ind_var_sd; // Standard deviation of inividual variation
+  int ind_corr; // Should individual variation be modelled with correlation
+  real lkj_prior; // LKJ prior for individual level variation
+  // Ct adjustment model parameters
   int adj_ct; // Should cts be adjusted
   int ct_preds; // Number of predictors for CT adjustment
-  real ct_preds_mean; // Mean of CT predictor coeffs
-  real ct_preds_sd; // Standard deviation of CT predictor coeffs
   matrix[N, ct_preds + 1] ct_design; // Design matrix for CT adjustment
-  int likelihood;
-  int output_loglik;
+  vector[ct_preds] beta_ct_shift_m; // Mean of Ct shifts effects
+  vector[ct_preds] beta_ct_shift_s; // Standard deviation of Ct shifts effects
+  vector[ct_preds] beta_ct_scale_m; // Mean of Ct shifts effects
+  vector[ct_preds] beta_ct_scale_s; // Standard deviation of Ct shifts effects
+  // Model control parameters
+  int likelihood; // Include log-likelihood
+  int output_loglik; // Output the log-likelihood (infection aggregated)
+  int pp; // Compute posterior predictions
 }
 
 transformed data {
@@ -81,26 +100,22 @@ transformed data {
 }
 
 parameters {
+  // Population-level parameters
+  real<lower = c_lod> c_int;   // Ct value before and after infection
+  real c_p_int; // Intercept of Ct value of viral load at peak
+  real t_p_int; // Intercept of time at peak
+  array[switch] real c_s_int; // Intercept of Ct value at switch
+  array[switch] real t_s_int; // Intercept at time of switch
+  array[any_onsets] real inc_mean_int; //Incubation period mean intercept
+  array[any_onsets] real<lower = 0> inc_sd_int; //Incubation period sd intercept
+  real t_clear_int; // Intercept of the time virus is cleared
+  real<lower = 0> sigma; // Variance parameter for oobservation model
   // Individual-level parameters
   vector<lower = t_inf_bound>[P] t_inf; // Inferred time of infection
   // Cholesky_factored correlation matrix
   cholesky_factor_corr[ind_corr ? K : 0] L_Omega;
-
-  // Population-level parameters
-  real<lower = c_lod> c_int;   // Ct value before and after infection
-  real c_p_int; // Intercept of Ct value of viral load at peak
-  array[switch] real c_s_int; // Intercept of Ct value at switch
-  array[any_onsets] real inc_mean_int; //Incubation period mean intercept
-  array[any_onsets] real<lower = 0> inc_sd_int; //Incubation period sd intercept
-  
-
-
-  real t_p_int; // Intercept of time at peak
-  array[switch] real t_s_int; // Intercept at time of switch
-  real t_clear_int; // Intercept of the time virus is cleared
   vector<lower = 0>[ind_var_m ? K : 0] ind_var; // SD of individual variation
   matrix[ind_var_m ? K : 0, P] ind_eta; // Individual level variation
-  real<lower = 0> sigma; // Variance parameter for oobservation model
   // Covariate Coefficients
   vector[preds && adj_t_p ? preds : 0] beta_t_p;
   vector[preds && adj_t_s ? preds : 0] beta_t_s;
@@ -164,7 +179,7 @@ transformed parameters {
 
   // Expected ct value given viral load parameters
   exp_ct = piecewise_ct_by_id(
-    inf_rel, c_int, c_p, c_s, c_int, t_e, t_p, t_s, t_clear_abs, id,
+    inf_rel, c_int, c_p, c_s, c_int, 0, t_p, t_s, t_clear_abs, id,
     tests_per_id, cum_tests_per_id, switch
   );
 
@@ -192,32 +207,27 @@ model {
   // positive test or symtom onset.
   // Assumes that the first positive test is not a false positive.
   t_inf ~ normal(t_inf_mean, t_inf_p[2]); 
-  
   // CT piecewise linear intercept parameters
   c_int ~ normal(c_int_mean, c_int_p[2]) T[c_lod, ];
-  c_p_int ~ normal(c_p_int_p[1], c_p_int_p[2]); // Mean at 50% of switch value
-  t_p_int ~ normal(t_p_int_p[1], t_p_int_p[2]); // Mean at log(5)
+  c_p_int ~ normal(c_p_p[1], c_p_p[2]); // Mean at 50% of switch value
+  t_p_int ~ normal(t_p_p[1], t_p_p[2]); // Mean at log(5)
   //mean at log(10) + peak + scale timing 
-  t_clear_int ~ normal(t_clear_int_p[1], t_clear_int_p[2]); 
+  t_clear_int ~ normal(t_clear_p[1], t_clear_p[2]); 
   if (switch) {
-    c_s_int ~ normal(c_s_int_p[1], c_s_int_p[2]); //mean at 50% of maximum ct
-    t_s_int ~ normal(t_s_int_p[1], t_s_int_p[2]); //mean at log(5) + peak timing
+    c_s_int ~ normal(c_s_p[1], c_s_p[2]); //mean at 50% of maximum ct
+    t_s_int ~ normal(t_s_p[1], t_s_p[2]); //mean at log(5) + peak timing
   }
-
   // Individual level variation
   if (ind_var_m) {
     to_vector(ind_eta) ~ std_normal();
     ind_var ~ normal(ind_var_mean, ind_var_sd);
   }
-
   // LKJ prior on correlation between individual level dynamics
   if (ind_corr) {
     L_Omega ~ lkj_corr_cholesky(lkj_prior);
   }
-
   // Variation in observation model
   sigma ~ normal(sigma_p[1], sigma_p[2]) T[0,];
-
   // Coefficients priors for predictors
   if (preds) {
     if (adj_t_p) {
@@ -246,18 +256,15 @@ model {
     beta_ct_shift ~ normal(beta_ct_shift_m, beta_ct_shift_sd);
     beta_ct_scale ~ normal(beta_ct_scale_m, beta_ct_scale_sd);
   }
-
   if (any_onsets) {
     // Priors on the incubation period
-    inc_mean ~ normal(inc_mean_int[1], inc_mean_int[2]);
-    inc_sd[1] ~ normal(inc_sd_int[1], inc_sd_int[2]) T[0, ];
- 
+    inc_mean ~ normal(inc_mean_p[1], inc_mean_p[2]);
+    inc_sd[1] ~ normal(inc_sd_p[1], inc_sd_p[2]) T[0, ];
     if (likelihood) {
       // Component of likelihood for symptom onsets see onsets_lpmf.stan
       target += onsets_star[1];
     }
   }
-
   if (likelihood) {
     // Component of likelihood for expected ct values
     // If non-censored: P(observed ct | expected ct)
@@ -276,9 +283,11 @@ generated quantities {
   if (ind_corr) {
     correlation = L_Omega * L_Omega';
   }
-  // Posterior predictions
-  sim_ct = to_vector(normal_rng(adj_exp_ct, sigma));
-  sim_ct = fmin(sim_ct, c_lod);
+  if (pp) {
+    // Posterior predictions
+    sim_ct = to_vector(normal_rng(adj_exp_ct, sigma));
+    sim_ct = fmin(sim_ct, c_lod);
+  }
   // Output by infection log-likelihood
   if (output_loglik) {
     log_lik = rep_vector(0, P);
