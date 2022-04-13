@@ -56,14 +56,22 @@ data {
   int preds; // Number of predictors
   matrix[P, preds + 1] design; //Design matrix
   // User specified covariate parameters - priors
-  vector[preds] beta_c_p_m; // Mean of Ct shifts effects
-  vector[preds] beta_c_p_s; // Standard deviation of Ct shifts effects
-  vector[preds] beta_t_p_m; // Mean of Ct shifts effects
-  vector[preds] beta_t_p_s; // Standard deviation of Ct shifts effects
-  vector[preds] beta_c_s_m; // Mean of Ct shifts effects
-  vector[preds] beta_t_s_s; // Standard deviation of Ct shifts effects
-  vector[preds] beta_t_clear_m; // Mean of Ct shifts effects
+  vector[preds] beta_c_p_m; 
+  vector[preds] beta_c_p_sd;
+  vector[preds] beta_t_p_m; 
+  vector[preds] beta_t_p_sd;
+  vector[preds] beta_c_s_m; 
+  vector[preds] beta_c_s_sd; 
+  vector[preds] beta_t_s_m; 
+  vector[preds] beta_t_s_sd; 
+  vector[preds] beta_t_clear_m; 
+  vector[preds] beta_t_clear_sd; 
+  vector[preds] beta_inc_mean_m; 
+  vector[preds] beta_inc_mean_sd; 
+  vector[preds] beta_inc_sd_m; 
+  vector[preds] beta_inc_sd_sd; 
   // Individual-level parameters
+  array[2] real t_inf_p; // Prior on infection time adjustment
   int K; //Number of parameters with individual level variation
   int ind_var_m; // Should inividual variation be modelled
   vector[K] ind_var_mean; // Mean of individual variation
@@ -75,9 +83,9 @@ data {
   int ct_preds; // Number of predictors for CT adjustment
   matrix[N, ct_preds + 1] ct_design; // Design matrix for CT adjustment
   vector[ct_preds] beta_ct_shift_m; // Mean of Ct shifts effects
-  vector[ct_preds] beta_ct_shift_s; // Standard deviation of Ct shifts effects
+  vector[ct_preds] beta_ct_shift_sd; // Standard deviation of Ct shifts effects
   vector[ct_preds] beta_ct_scale_m; // Mean of Ct shifts effects
-  vector[ct_preds] beta_ct_scale_s; // Standard deviation of Ct shifts effects
+  vector[ct_preds] beta_ct_scale_sd; // Standard deviation of Ct shifts effects
   // Model control parameters
   int likelihood; // Include log-likelihood
   int output_loglik; // Output the log-likelihood (infection aggregated)
@@ -93,7 +101,7 @@ transformed data {
     t_inf_bound[i] = max({-onset_time[i], 0});
   }
   t_inf_mean = t_inf_bound + t_inf_p[1];
-  ct_int_mean = c_lod + c_int_p[1];
+  c_int_mean = c_lod + c_int_p[1];
   for (i in 0:60) {
     sim_times[i + 1] = i;
   }
@@ -192,8 +200,8 @@ transformed parameters {
     vector[P] onsets_ttar;
   
     onsets_ttar = onsets_lmpf(
-      inc_mean[1], inc_sd[1], beta_inc_mean, beta_inc_sd, design, onset_avail,
-      onset_time, onset_window, t_inf, ids_with_onsets
+      inc_mean_int[1], inc_sd_int[1], beta_inc_mean, beta_inc_sd, design,
+      onset_avail, onset_time, onset_window, t_inf, ids_with_onsets
     );
     onsets_star[1] = sum(onsets_ttar);
     if (output_loglik) {
@@ -237,7 +245,7 @@ model {
       beta_t_s ~ normal(beta_t_s_m, beta_t_s_sd);
     }
     if (adj_t_clear) {
-      beta_t_clear ~ normal(beta_t_clear_m], beta_t_clear_sd);
+      beta_t_clear ~ normal(beta_t_clear_m, beta_t_clear_sd);
     }
     if (adj_c_p) {
       beta_c_p ~ normal(beta_c_p_m, beta_c_p_sd);
@@ -258,8 +266,8 @@ model {
   }
   if (any_onsets) {
     // Priors on the incubation period
-    inc_mean ~ normal(inc_mean_p[1], inc_mean_p[2]);
-    inc_sd[1] ~ normal(inc_sd_p[1], inc_sd_p[2]) T[0, ];
+    inc_mean_int ~ normal(inc_mean_p[1], inc_mean_p[2]);
+    inc_sd_int[1] ~ normal(inc_sd_p[1], inc_sd_p[2]) T[0, ];
     if (likelihood) {
       // Component of likelihood for symptom onsets see onsets_lpmf.stan
       target += onsets_star[1];
