@@ -97,7 +97,6 @@ epict_filter_ids <- function(obs, min_uncensored_tests = 2,
   }else{
     fil_obs <- fil_obs[uncensored_tests < min_uncensored_tests]
   }
-  
   days_with_uncensored <- fil_obs[
     censored == FALSE, .(days_with_uncensored = .N), by = "id"
   ]
