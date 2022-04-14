@@ -1,5 +1,5 @@
 #' Check unproccessed observations meet the package specification
-#' 
+#'
 #'Required raw data format:
 #'  - id: An integer vector uniquely identifying eahc infection.
 #'  - test_id: An integer vector uniquely identiying each test
@@ -11,6 +11,16 @@
 #'  NA if unavailable/asymptomatic
 #'  - onset_t Time on onset relative to a baseline date (optional).
 #'  - censored: Logical, indicating if the Ct has been censored.
+#'
+#' @param obs DESCRIPTION.
+#' 
+#' @param dates_available DESCRIPTION.
+#' 
+#' @param check_onset DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 epict_check_raw_obs <- function(obs, dates_available = TRUE,
                                 check_onset = FALSE) {
   cols <- c("id", "test_id", "ct_value", "censored")
@@ -27,6 +37,16 @@ epict_check_raw_obs <- function(obs, dates_available = TRUE,
   return(obs[])
 }
 #' Make time relative to first test in the data
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param obs DESCRIPTION.
+#' 
+#' @param baseline_date DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 epict_make_time_rel <- function(obs, baseline_date = min(obs$onset_date,
                                                          na.rm = TRUE)) {
   rel_obs <- data.table::copy(rel_obs)
@@ -37,11 +57,31 @@ epict_make_time_rel <- function(obs, baseline_date = min(obs$onset_date,
   return(rel_obs[])
 }
 #' Drop Ct values with no data
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param obs DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 epict_drop_na_ct <- function(obs) {
  fil_obs <- data.table::copy(obs)[!is.na(ct_value)]
  return(fil_obs[])
 }
 #' Filter infection IDs based on characteristics
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param obs DESCRIPTION.
+#' 
+#' @param min_uncensored_tests DESCRIPTION.
+#' 
+#' @param min_days_with_uncensored DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 epict_filter_ids <- function(obs, min_uncensored_tests = 2,
                              min_days_with_uncensored = 2) {
   fil_obs <- data.table::copy(obs)
@@ -58,6 +98,14 @@ epict_filter_ids <- function(obs, min_uncensored_tests = 2,
   return(fil_obs[])
 } 
 #' Make time relative to first uncensored test per ID
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param obs DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 epict_make_time_rel_to_first_uncensored <- function(obs) {
   rel_obs <- data.table::copy(rel_obs)
   first_uncensored <- rel_obs[
@@ -72,6 +120,22 @@ epict_make_time_rel_to_first_uncensored <- function(obs) {
   return(rel_obs[])
 }
 #' Flag potentially spurious IDs
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param max_t_rel_uncensored DESCRIPTION.
+#' 
+#' @param max_onset_t_rel_uncensored DESCRIPTION.
+#' 
+#' @param flag DESCRIPTION.
+#' 
+#' @param drop DESCRIPTION.
+#' 
+#' @param return_spurious DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 epict_flag_spurious_ids <- function(max_t_rel_uncensored = 60,
                                     max_onset_t_rel_uncensored = 15,
                                     flag = TRUE, drop = TRUE,
@@ -98,6 +162,14 @@ epict_flag_spurious_ids <- function(max_t_rel_uncensored = 60,
   return(fil_obs[])
 }
 #' Clean up factor levels
+#'
+#' FUNCTION_DESCRIPTION
+#'
+#' @param vars DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 #' @importFrom forcats fct_drop
 epict_clean_factors <- function(vars = c()) {
   clean_obs <- data.table::copy(obs)
@@ -124,6 +196,14 @@ epict_clean_factors <- function(vars = c()) {
 #'  - onset_t_rel_uncensored: Time of onset relative to the first uncensored Ct
 #' value for that id. (optional). NA if unavailable/asymptomatic.
 #'  - censored: Logical, indicating if the Ct has been censored.
+#'
+#' @param obs DESCRIPTION.
+#' 
+#' @param check_onsets DESCRIPTION.
+#'
+#' @return RETURN_DESCRIPTION
+#' @author Sam Abbott
+#' @export
 epict_check_obs <- function(obs, check_onsets = FALSE) {
   cols <- c("id", "test_id", "t", "t_rel_uncensored", "ct_value",
             "censored")
