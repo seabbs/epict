@@ -79,22 +79,35 @@ epict_drop_na_ct <- function(obs) {
 #' 
 #' @param min_days_with_uncensored DESCRIPTION.
 #'
+#' @param invert Logical, defaults to `FALSE`. Should the filtering
+#' requirements be inverted.
+#' 
 #' @return RETURN_DESCRIPTION
 #' @author Sam Abbott
 #' @export
 epict_filter_ids <- function(obs, min_uncensored_tests = 2,
-                             min_days_with_uncensored = 2) {
+                             min_days_with_uncensored = 2, invert = FALSE) {
   fil_obs <- data.table::copy(obs)
   uncensored_by_id <- obs[
     censored == FALSE, .(uncensored_tests = .N), by = "id"
   ]
   fil_obs <- fil_obs[uncensored_by_id, on = "id"]
-  fil_obs <- fil_obs[uncensored_tests >= min_uncensored_tests]
+  if (!invert)  {
+    fil_obs <- fil_obs[uncensored_tests >= min_uncensored_tests]
+  }else{
+    fil_obs <- fil_obs[uncensored_tests < min_uncensored_tests]
+  }
+  
   days_with_uncensored <- fil_obs[
     censored == FALSE, .(days_with_uncensored = .N), by = "id"
   ]
   fil_obs <- fil_obs[days_with_uncensored, on = "id"]
   fil_obs <- fil_obs[days_with_uncensored >= min_days_with_uncensored]
+  if (!invert)  {
+    fil_obs <- fil_obs[days_with_uncensored >= min_days_with_uncensored]
+  }else{
+    fil_obs <- fil_obs[days_with_uncensored < min_days_with_uncensored]
+  }
   return(fil_obs[])
 } 
 #' Make time relative to first uncensored test per ID
