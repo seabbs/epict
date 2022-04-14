@@ -106,7 +106,7 @@ epict_clean_factors <- function(vars = c()) {
 #'  - t: Relative (to a baseline) time of the test yielding a Ct value.
 #'  - t_rel_uncensored: Time of test relative to the first uncensored Ct value
 #' for that id.
-#'  - onset_t Relative (to a baseline) time of onset for each infection
+#'  - onset_t: Relative (to a baseline) time of onset for each infection
 #'  - onset_t_rel_uncensored: Time of onset relative to the first uncensored Ct
 #' value for that id. (optional). NA if unavailable/asymptomatic.
 #'  - censored: Logical, indicating if the Ct has been censored.
