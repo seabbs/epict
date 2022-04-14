@@ -4,12 +4,26 @@
 #'  - id: An integer vector uniquely identifying eahc infection.
 #'  - test_id: An integer vector uniquely identiying each test
 #'  - ct_value: Numeric cycle threshold value.
-#'  - test_date: Date of the test yielding a Ct value.
+#'  - test_date: Date of the test yielding a Ct value. (optional)
+#'  - t: Time of test relative to a baseline date. Optional but required
+#' if test_date is not present.
 #'  - onset_date Date of onset for each infection (optional).
 #'  NA if unavailable/asymptomatic
+#'  - onset_t Time on onset relative to a baseline date (optional).
 #'  - censored: Logical, indicating if the Ct has been censored.
-epict_check_raw_obs <- function(obs) {
-  cols <- c("id", "test_id", "ct_value", "test_date", "censored")
+epict_check_raw_obs <- function(obs, dates_available = TRUE,
+                                check_onset = FALSE) {
+  cols <- c("id", "test_id", "ct_value", "censored")
+  if (dates_available) {
+    cols <- c(cols, "test_date")
+  }else{
+    cols <- c(cols, "t")
+  }
+  if (!check_onsets & dates_available) {
+    cols <- c(cols, "onset_date")
+  }else if (!check_onsets & !dates_available){
+    cols <- c(cols, "onset_t")
+  }
   return(obs[])
 }
 #' Make time relative to first test in the data
@@ -110,8 +124,11 @@ epict_clean_factors <- function(vars = c()) {
 #'  - onset_t_rel_uncensored: Time of onset relative to the first uncensored Ct
 #' value for that id. (optional). NA if unavailable/asymptomatic.
 #'  - censored: Logical, indicating if the Ct has been censored.
-epict_check_obs <- function(obs) {
-  cols <- c("id", "test_id", "t", "t_by_first_uncensored", "ct_value",
+epict_check_obs <- function(obs, check_onsets = FALSE) {
+  cols <- c("id", "test_id", "t", "t_rel_uncensored", "ct_value",
             "censored")
+  if (check_onsets){
+    cols <- c(cols, "onset_t", "onset_t_rel_uncensored")
+  }
   return(obs[])
 }
