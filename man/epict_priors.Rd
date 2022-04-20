@@ -4,7 +4,7 @@
 \alias{epict_priors}
 \title{Default model priors}
 \usage{
-epict_priors()
+epict_priors(individual_variation = c(0, 0.05))
 }
 \value{
 A data frame summarising the model priors.
@@ -16,9 +16,12 @@ Default model priors
 epict_priors()
 }
 \seealso{
-Other model: 
+Functions used for modelling
 \code{\link{epict_inits}()},
 \code{\link{epict_model}()},
 \code{\link{epict_to_stan}()}
+}
+\author{
+Sam Abbott
 }
 \concept{model}

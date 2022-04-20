@@ -5,7 +5,7 @@ list( # nolint
     modeldesign = "Functions used to formulate models",
     modeltools = "Functions used to help convert models into the format required for stan", # nolint
     postprocess = "Functions used for postprocessing of model fits", # nolint
-    plot = "Plotting functions"
+    plot = "Plotting functions",
     generatedata = "Functions to generate simulated data",
     scenarios = "Functions to define and create scenarios",
     data = "Package data sets",

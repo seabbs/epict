@@ -21,6 +21,7 @@ Imports:
     magrittr,
     patchwork,
     posterior,
+    purrr,
     stringr,
     truncnorm
 Suggests: 

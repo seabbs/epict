@@ -5,8 +5,8 @@
 #' @importFrom data.table data.table
 #' @family model
 #' @export
-#' @examples
 #' @author Sam Abbott
+#' @examples
 #' epict_priors()
 epict_priors <- function(individual_variation = c(0, 0.05)) {
   priors <- data.table::data.table(

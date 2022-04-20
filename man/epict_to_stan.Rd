@@ -8,6 +8,7 @@ epict_to_stan(
   obs,
   ct_model = subject_design(~1, obs),
   adjustment_model = test_design(~1, obs),
+  priors = epict::epict_priors(),
   individual_variation = 0.2,
   individual_correlation = 1,
   censoring_threshold = 40,
@@ -25,7 +26,7 @@ A list as required by stan.
 Format data for use with stan
 }
 \seealso{
-Other model: 
+Functions used for modelling
 \code{\link{epict_inits}()},
 \code{\link{epict_model}()},
 \code{\link{epict_priors}()}

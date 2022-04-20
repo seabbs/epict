@@ -46,7 +46,7 @@ mod
 \dontshow{\}) # examplesIf}
 }
 \seealso{
-Other model: 
+Functions used for modelling
 \code{\link{epict_inits}()},
 \code{\link{epict_priors}()},
 \code{\link{epict_to_stan}()}

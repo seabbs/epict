@@ -17,7 +17,7 @@ for the package stan models.
 Set up initial conditions for model
 }
 \seealso{
-Other model: 
+Functions used for modelling
 \code{\link{epict_model}()},
 \code{\link{epict_priors}()},
 \code{\link{epict_to_stan}()}

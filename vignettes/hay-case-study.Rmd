@@ -6,7 +6,7 @@ output: rmarkdown::html_document
 bibliography: library.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-numeric-superscript-brackets.csl
 vignette: >
-  %\VignetteIndexEntry{Model definition and implementation}
+  %\VignetteIndexEntry{Case study: Hay et al.}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

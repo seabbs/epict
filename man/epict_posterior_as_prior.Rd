@@ -8,6 +8,7 @@ epict_posterior_as_prior(
   fit,
   priors = epict::epict_priors(),
   variables = c(),
+  sub = "_int",
   scale = 5
 )
 }
@@ -19,6 +20,10 @@ epict_posterior_as_prior(
 
 \item{variables}{A character vector of variables both in the
 posterior and in the default priors.}
+
+\item{sub}{A character string indicating the part of variable names in the
+posterior to remove. This can be used to link variable names in the model
+object to those expected as input.}
 
 \item{scale}{Numeric, defaults to 5. Amount to scale posterior standard
 deviations by.}
@@ -32,9 +37,10 @@ priors (based on the distributions given in \code{\link[=epict_priors]{epict_pri
 assuming they are independent normal
 }
 \seealso{
-Other modeltools: 
+Functions used to help convert models into the format required for stan
 \code{\link{epict_formula_as_data_list}()},
+\code{\link{epict_individual_priors_as_data_list}()},
 \code{\link{epict_opts_as_data_list}()},
-\code{\link{epict_priors_as_data_list}()}
+\code{\link{epict_population_priors_as_data_list}()}
 }
 \concept{modeltools}

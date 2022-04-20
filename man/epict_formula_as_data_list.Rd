@@ -25,9 +25,10 @@ A list as required by stan.
 Format formula data for use with stan
 }
 \seealso{
-Other modeltools: 
+Functions used to help convert models into the format required for stan
+\code{\link{epict_individual_priors_as_data_list}()},
 \code{\link{epict_opts_as_data_list}()},
-\code{\link{epict_posterior_as_prior}()},
-\code{\link{epict_priors_as_data_list}()}
+\code{\link{epict_population_priors_as_data_list}()},
+\code{\link{epict_posterior_as_prior}()}
 }
 \concept{modeltools}

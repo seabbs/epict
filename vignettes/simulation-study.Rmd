@@ -1,0 +1,36 @@
+---
+title: Simulation study
+description: "A simple simulation study with ideas for extensions"
+author: Sam Abbott
+output: rmarkdown::html_document
+bibliography: library.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-numeric-superscript-brackets.csl
+vignette: >
+  %\VignetteIndexEntry{Simulation study}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+# Summary
+
+# Introduction
+
+# Methods
+
+## Simulated data
+
+## Simulated scenarios
+
+## Model validation
+ 
+# Results
+
+# References
