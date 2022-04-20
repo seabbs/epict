@@ -3,9 +3,9 @@ pkgdown: 2.0.2.9000
 pkgdown_sha: 98d5a5c735eb244cb98b2e6bab1d54bb27c0af95
 articles:
   hay-case-study: hay-case-study.html
-  model copy: model copy.html
   model: model.html
-last_built: 2022-04-13T16:31Z
+  simulation-study: simulation-study.html
+last_built: 2022-04-20T10:59Z
 urls:
   reference: samabbott.co.uk/epict/reference
   article: samabbott.co.uk/epict/articles

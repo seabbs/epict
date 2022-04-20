@@ -37,8 +37,8 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/hay-case-study.html">Case study: Hay et al.</a>
-    <a class="dropdown-item" href="../articles/model%20copy.html">Model definition and implementation</a>
     <a class="dropdown-item" href="../articles/model.html">Model definition and implementation</a>
+    <a class="dropdown-item" href="../articles/simulation-study.html">Simulation study</a>
   </div>
 </li>
 <li class="nav-item">
@@ -85,6 +85,7 @@
   <span class="va">obs</span>,
   ct_model <span class="op">=</span> <span class="fu">subject_design</span><span class="op">(</span><span class="op">~</span><span class="fl">1</span>, <span class="va">obs</span><span class="op">)</span>,
   adjustment_model <span class="op">=</span> <span class="fu">test_design</span><span class="op">(</span><span class="op">~</span><span class="fl">1</span>, <span class="va">obs</span><span class="op">)</span>,
+  priors <span class="op">=</span> <span class="fu">epict</span><span class="fu">::</span><span class="fu"><a href="epict_priors.html">epict_priors</a></span><span class="op">(</span><span class="op">)</span>,
   individual_variation <span class="op">=</span> <span class="fl">0.2</span>,
   individual_correlation <span class="op">=</span> <span class="fl">1</span>,
   censoring_threshold <span class="op">=</span> <span class="fl">40</span>,
@@ -102,7 +103,7 @@
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Other model: 
+    <div class="dont-index"><p>Functions used for modelling
 <code><a href="epict_inits.html">epict_inits</a>()</code>,
 <code><a href="epict_model.html">epict_model</a>()</code>,
 <code><a href="epict_priors.html">epict_priors</a>()</code></p></div>

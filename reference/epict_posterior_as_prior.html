@@ -41,8 +41,8 @@ assuming they are independent normal"><meta name="twitter:card" content="summary
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/hay-case-study.html">Case study: Hay et al.</a>
-    <a class="dropdown-item" href="../articles/model%20copy.html">Model definition and implementation</a>
     <a class="dropdown-item" href="../articles/model.html">Model definition and implementation</a>
+    <a class="dropdown-item" href="../articles/simulation-study.html">Simulation study</a>
   </div>
 </li>
 <li class="nav-item">
@@ -91,6 +91,7 @@ assuming they are independent normal</p>
   <span class="va">fit</span>,
   priors <span class="op">=</span> <span class="fu">epict</span><span class="fu">::</span><span class="fu"><a href="epict_priors.html">epict_priors</a></span><span class="op">(</span><span class="op">)</span>,
   variables <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
+  sub <span class="op">=</span> <span class="st">"_int"</span>,
   scale <span class="op">=</span> <span class="fl">5</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -105,6 +106,10 @@ assuming they are independent normal</p>
 <dt>variables</dt>
 <dd><p>A character vector of variables both in the
 posterior and in the default priors.</p></dd>
+<dt>sub</dt>
+<dd><p>A character string indicating the part of variable names in the
+posterior to remove. This can be used to link variable names in the model
+object to those expected as input.</p></dd>
 <dt>scale</dt>
 <dd><p>Numeric, defaults to 5. Amount to scale posterior standard
 deviations by.</p></dd>
@@ -115,10 +120,11 @@ deviations by.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Other modeltools: 
+    <div class="dont-index"><p>Functions used to help convert models into the format required for stan
 <code><a href="epict_formula_as_data_list.html">epict_formula_as_data_list</a>()</code>,
+<code><a href="epict_individual_priors_as_data_list.html">epict_individual_priors_as_data_list</a>()</code>,
 <code><a href="epict_opts_as_data_list.html">epict_opts_as_data_list</a>()</code>,
-<code><a href="epict_priors_as_data_list.html">epict_priors_as_data_list</a>()</code></p></div>
+<code><a href="epict_population_priors_as_data_list.html">epict_population_priors_as_data_list</a>()</code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

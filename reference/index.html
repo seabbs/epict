@@ -37,8 +37,8 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/hay-case-study.html">Case study: Hay et al.</a>
-    <a class="dropdown-item" href="../articles/model%20copy.html">Model definition and implementation</a>
     <a class="dropdown-item" href="../articles/model.html">Model definition and implementation</a>
+    <a class="dropdown-item" href="../articles/simulation-study.html">Simulation study</a>
   </div>
 </li>
 <li class="nav-item">
@@ -91,14 +91,59 @@
         <dd>Model Cycle Thresholds</dd>
       </dl><dl><dt>
           
+          <code><a href="epict_check_obs.html">epict_check_obs()</a></code> 
+        </dt>
+        <dd>Check processed observations meet package specifications</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_check_raw_obs.html">epict_check_raw_obs()</a></code> 
+        </dt>
+        <dd>Check unproccessed observations meet the package specification</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_clean_factors.html">epict_clean_factors()</a></code> 
+        </dt>
+        <dd>Clean up factor levels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_drop_na_ct.html">epict_drop_na_ct()</a></code> 
+        </dt>
+        <dd>Drop Ct values with no data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_filter_ids.html">epict_filter_ids()</a></code> 
+        </dt>
+        <dd>Filter infection IDs based on characteristics</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_flag_spurious_ids.html">epict_flag_spurious_ids()</a></code> 
+        </dt>
+        <dd>Flag potentially spurious IDs</dd>
+      </dl><dl><dt>
+          
           <code><a href="epict_formula_as_data_list.html">epict_formula_as_data_list()</a></code> 
         </dt>
         <dd>Format formula data for use with stan</dd>
       </dl><dl><dt>
           
+          <code><a href="epict_individual_priors_as_data_list.html">epict_individual_priors_as_data_list()</a></code> 
+        </dt>
+        <dd>FUNCTION_TITLE</dd>
+      </dl><dl><dt>
+          
           <code><a href="epict_inits.html">epict_inits()</a></code> 
         </dt>
         <dd>Set up initial conditions for model</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_make_time_rel.html">epict_make_time_rel()</a></code> 
+        </dt>
+        <dd>Make time relative to first test in the data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_make_time_rel_to_first_uncensored.html">epict_make_time_rel_to_first_uncensored()</a></code> 
+        </dt>
+        <dd>Make time relative to first uncensored test per ID</dd>
       </dl><dl><dt>
           
           <code><a href="epict_model.html">epict_model()</a></code> 
@@ -111,6 +156,11 @@
         <dd>Format model options for use with stan</dd>
       </dl><dl><dt>
           
+          <code><a href="epict_population_priors_as_data_list.html">epict_population_priors_as_data_list()</a></code> 
+        </dt>
+        <dd>FUNCTION_TITLE</dd>
+      </dl><dl><dt>
+          
           <code><a href="epict_posterior_as_prior.html">epict_posterior_as_prior()</a></code> 
         </dt>
         <dd>Extract summarised posteriors to use as priors</dd>
@@ -119,11 +169,6 @@
           <code><a href="epict_priors.html">epict_priors()</a></code> 
         </dt>
         <dd>Default model priors</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epict_priors_as_data_list.html">epict_priors_as_data_list()</a></code> 
-        </dt>
-        <dd>FUNCTION_TITLE</dd>
       </dl><dl><dt>
           
           <code><a href="epict_to_stan.html">epict_to_stan()</a></code> 
