@@ -1,6 +1,11 @@
 #' Check unproccessed observations meet the package specification
 #'
-#'Required raw data format:
+#' Checks the available raw data for required variables and returns informative
+#' errors, warnings, and messages about the structure of the observations. It
+#' can be used both on datasets referenced using dates and datasets referenced
+#' using relative time.
+#'
+#' @param obs A data.frame with the following variables:
 #'  - id: An integer vector uniquely identifying eahc infection.
 #'  - test_id: An integer vector uniquely identiying each test
 #'  - ct_value: Numeric cycle threshold value.
@@ -10,15 +15,16 @@
 #'  - onset_date Date of onset for each infection (optional).
 #'  NA if unavailable/asymptomatic
 #'  - onset_t Time on onset relative to a baseline date (optional).
-#'  - censored: Logical, indicating if the Ct has been censored.
-#'
-#' @param obs DESCRIPTION.
+#'  - censored: Logical, indicating if the Ct has been censored. 
 #' 
-#' @param dates_available DESCRIPTION.
+#' @param dates_available Logical, defaults to `TRUE`. Are dates available
+#' in the observed data. If `FALSE` it is assumed that relative times should be
+#' available instead.
 #' 
-#' @param check_onset DESCRIPTION.
+#' @param check_onset Logical, defaults to `FALSE`. Should observations be
+#' checked for the presence of symptom onset data.
 #'
-#' @return RETURN_DESCRIPTION
+#' @return Input observations are returned.
 #' @author Sam Abbott
 #' @export
 epict_check_raw_obs <- function(obs, dates_available = TRUE,

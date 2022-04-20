@@ -7,17 +7,7 @@
 epict_check_raw_obs(obs, dates_available = TRUE, check_onset = FALSE)
 }
 \arguments{
-\item{obs}{DESCRIPTION.}
-
-\item{dates_available}{DESCRIPTION.}
-
-\item{check_onset}{DESCRIPTION.}
-}
-\value{
-RETURN_DESCRIPTION
-}
-\description{
-Required raw data format:
+\item{obs}{A data.frame with the following variables:
 \itemize{
 \item id: An integer vector uniquely identifying eahc infection.
 \item test_id: An integer vector uniquely identiying each test
@@ -29,7 +19,23 @@ if test_date is not present.
 NA if unavailable/asymptomatic
 \item onset_t Time on onset relative to a baseline date (optional).
 \item censored: Logical, indicating if the Ct has been censored.
+}}
+
+\item{dates_available}{Logical, defaults to \code{TRUE}. Are dates available
+in the observed data. If \code{FALSE} it is assumed that relative times should be
+available instead.}
+
+\item{check_onset}{Logical, defaults to \code{FALSE}. Should observations be
+checked for the presence of symptom onset data.}
 }
+\value{
+Input observations are returned.
+}
+\description{
+Checks the available raw data for required variables and returns informative
+errors, warnings, and messages about the structure of the observations. It
+can be used both on datasets referenced using dates and datasets referenced
+using relative time.
 }
 \author{
 Sam Abbott
