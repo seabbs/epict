@@ -6,7 +6,7 @@
 #' using relative time.
 #'
 #' @param obs A data.frame with the following variables:
-#'  - id: An integer vector uniquely identifying eahc infection.
+#'  - id: An integer vector uniquely identifying each infection.
 #'  - test_id: An integer vector uniquely identiying each test
 #'  - ct_value: Numeric cycle threshold value.
 #'  - test_date: Date of the test yielding a Ct value. (optional)

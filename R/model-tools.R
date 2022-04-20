@@ -1,3 +1,81 @@
+#' Format observed symptom onset data for use with stan
+#'
+#' @param onsets Logical, defaults to `TRUE`. Should symptom onsets 
+#' observations be included in the model if available.
+#' [epict_obs_as_data_list()].
+#' @inheritParams epict_check_obs
+#' @return A list as required by stan.
+#' @family modeltools
+#' @importFrom data.table copy
+#' @export
+epict_onset_obs_as_data_list <- function(obs, onsets = TRUE) {
+
+  obs <- data.table::copy(obs)
+  P <- length(unique(obs$id))
+
+  if (is.null(obs$onset_time) | !onsets) {
+    data <- list(
+      any_onsets = 0,
+      onset_avail = rep(0, P),
+      onset_time = rep(0, P),
+      onset_window = rep(0, P)
+    )
+  } else {
+    onset_obs <- suppressWarnings(
+      obs[,
+        .(onset_time = min(onset_t_rel_uncensored, na.rm = TRUE), id),
+        by = "id"
+      ][
+        is.infinite(onset_time), onset_time := NA
+      ]
+    )
+    data <- list(
+      any_onsets = 1,
+      onset_avail = as.numeric(!is.na(onset_obs$onset_time)),
+      nonsets = sum(as.numeric(!is.na(onset_obs$onset_time))),
+      ids_with_onsets = onset_obs[!is.na(onset_time), id],
+      onset_time = ifelse(is.na(onset_obs$onset_time),
+                            0, onset_obs$onset_time),
+      onset_window = rep(1, P)
+    )
+  }
+  return(data)
+}
+
+#' Format observed data for use with stan
+#'
+#' 
+#' @inheritParams epict_check_obs
+#' @return A list as required by stan.
+#' @family modeltools
+#' @importFrom data.table copy
+#' @export
+epict_obs_as_data_list <- function(obs) {
+
+  obs <- data.tabler::copy(obs)[order(id)]
+  obs[, obs_id := 1:.N]
+  tests_per_id <- obs[, .(n = .N), by = "id"]$n
+
+  # Format indexing and observed data
+  # See stan code for docs on what all of these are
+  data <- list(
+    N = obs[, .N],
+    P = length(unique(obs$id)),
+    id = obs[, id],
+    tests_per_id = tests_per_id,
+    cum_tests_per_id = cumsum(tests_per_id),
+    day_rel = obs$t_rel_uncensored,
+    ct_value = obs$ct_value,
+    ncensored = length(obs[censored == 1]$obs),
+    censored = obs[censored == 1]$obs,
+    nuncensored = length(obs[censored == 0]$obs),
+    uncensored = obs[censored == 0]$obs,
+    uncensored_by_test = abs(obs$censored - 1),
+    c_lod = min(obs[censored == 1]$ct_value)
+  )
+  return(data)
+}
+
 params_avail_to_adjust <- function(params = "all") {
   choices <- c("t_p", "t_s", "t_clear", "c_p", "c_s", "inc_mean", "inc_sd")
   params <- match.arg(params, c(choices, "all"), several.ok = TRUE)
@@ -20,7 +98,7 @@ test_design <- function(formula = ~1, data, preds_sd = 1) {
 }
 
 subject_design <- function(formula = ~1, data, preds_sd = 0.1,
-                           params = "all") {
+                                 params = "all") {
   params <- params_avail_to_adjust(params)
 
   subjects <- extract_subjects(data)
@@ -34,57 +112,94 @@ subject_design <- function(formula = ~1, data, preds_sd = 0.1,
 }
 
 #' Format formula data for use with stan
-#'
-#' @param data A list of stan observation data as produced by
-#' [enw_obs_as_data_list()].
-#'
-#' @param ct_effects A list of fixed and random design matrices
-#' defining the date of reference model. Defaults to [enw_formula()]
-#' which is an intercept only model.
-#'
-#' @param adjustment_effects A list of fixed and random design matrices
-#' defining the date of reports model. Defaults to [enw_formula()]
-#' which is an intercept only model.
-#'
+#' 
+#' @param switch Logical, default to `FALSE`. Should a secondary breakpoint be
+#' included in the piecewise linear Cycle threshold model.
+#' 
+#' @param ct_model_opts A list of Cycle threshold model options as returned
+#' by [epict_ct_model_opts()].
+#' 
+#' @param variation A character string indicating the type of individual level
+#' variation to include. Defaults to "correlated" (a random effect with
+#' modelled correlation structure). Other options include "uncorrelated" (
+#' a random effect with no modelled correlation structure), and "none" (for no
+#' individual level variation).
+#' 
 #' @return A list as required by stan.
+#' @inheritParams epict_opts_as_data_list
 #' @family modeltools
 #' @export
-epict_formula_as_data_list <- function(data, ct_model, adjustment_model) {
-  fdata <- list(
-    npmfs = nrow(reference_effects$fixed$design),
-    dpmfs = reference_effects$fixed$index,
-    neffs = ncol(reference_effects$fixed$design) - 1,
-    d_fixed = reference_effects$fixed$design,
-    neff_sds = ncol(reference_effects$random$design) - 1,
-    d_random = reference_effects$random$design
+epict_model_opts <- function(onsets = TRUE, switch = FALSE,
+                             variation = "correlated") {
+  variation <- match.arg(
+    variation, 
+    choices = c("none", "correlated", "uncorrelated")
   )
 
-  # map report date effects to groups and days
-  report_date_eff_ind <- matrix(
-    report_effects$fixed$index,
-    ncol = data$g, nrow = data$t + data$dmax - 1
+  data <- list(
+    switch = as.numeric(switch),
+    onsets = as.numeric(onsets),
+    ind_var_m = as.numeric(variation != "none"),
+    ind_corr = as.numeric(variaiton == "correlated")
   )
-
-  # Add report date data
-  fdata <- c(fdata, list(
-    rd = data$t + data$dmax - 1,
-    urds = nrow(report_effects$fixed$design),
-    rdlurd = report_date_eff_ind,
-    nrd_effs = ncol(report_effects$fixed$design) - 1,
-    rd_fixed = report_effects$fixed$design,
-    nrd_eff_sds = ncol(report_effects$random$design) - 1,
-    rd_random = report_effects$random$design
-  ))
-  return(fdata)
+  return(opts)
 }
 
-#' FUNCTION_TITLE
+#' Format formula data for use with stan
+#' @param model_opts A list of Cycle threshold model options as returned
+#' by [epict_ct_model_opts()].
+#' 
+#' @param piecewise_formula A list describing the piecewise linear cycle threshold
+#' formula as described by [subject_design()].
 #'
-#' FUNCTION_DESCRIPTION
+#' @param adjustment_model A list describing the cycle threshold linear
+#' adjustment formula (shift and scale) as described by [test_design()].
 #'
-#' @param priors DESCRIPTION.
+#' @return A list as required by stan.
+#' @inheritParams epict_opts_as_data_list
+#' @family modeltools
+#' @export
+epict_formula_as_data_list <- function(piecewise_formula,
+                                       adjustment_formula,
+                                       model_opts = epict::model_opts()) {
+  data <- list(
+      preds = ncol(piecewise_formula$design) - 1,
+      preds_sd = piecewise_formula$preds_sd,
+      design = piecewise_formula$design,
+      adj_t_p = piecewise_formula$params[["t_p"]],
+      adj_t_s = min(
+        piecewise_formula$params[["t_s"]], model_opts$switch
+      ),
+      adj_t_clear = piecewise_formula$params[["t_clear"]],
+      adj_c_p = piecewise_formula$params[["c_p"]],
+      adj_c_s = min(
+        piecewise_formula$params[["c_s"]], model_opts$switch
+      ),
+      adj_inc_mean = piecewise_formula$params[["inc_mean"]],
+      adj_inc_sd = piecewise_formula$params[["inc_sd"]]
+  )
+
+  # Add adjustment formula data
+  data <- c(fdata, list(
+    adj_ct = as.numeric(
+      (ncol(adjustment_formula$design) - 1) > 0
+    ),
+    ct_preds = ncol(adjustment_formula$design) - 1,
+    ct_preds_sd = adjustment_formula$preds_sd,
+    ct_design = adjustment_formula$design
+  ))
+  return(data)
+}
+
+#' Format population priors for use in stan
 #'
-#' @return RETURN_DESCRIPTION
+#'
+#' @param priors A data.table of population priors as produced
+#' by [epict_priors()].
+#'
+#' @return A list of named priors with the mean and standard deivation
+#' for each.
+#' 
 #' @family modeltools
 #' @importFrom data.table copy
 #' @importFrom purrr map
@@ -101,11 +216,8 @@ epict_population_priors_as_data_list <- function(priors) {
   return(priors)
 }
 
-#' FUNCTION_TITLE
+#' Format 
 #'
-#' FUNCTION_DESCRIPTION
-#'
-#' @param priors DESCRIPTION.
 #'
 #' @return RETURN_DESCRIPTION
 #' @family modeltools
@@ -127,8 +239,8 @@ epict_individual_priors_as_data_list <- function(priors) {
   return(priors)
 }
 
-#' Format model options for use with stan
-#'
+#' Format inference options for use with stan
+#' 
 #' @param pp Logical, defaults to `FALSE`. Should posterior predictions be made
 #' for observed data. Useful for evaluating the performance of the model.
 #'
@@ -141,12 +253,12 @@ epict_individual_priors_as_data_list <- function(priors) {
 #'
 #' @param debug Logical, defaults to `FALSE`. Should within model debug
 #' information be returned.
-#'
+#' 
 #' @return A list as required by stan.
 #' @importFrom data.table fcase
 #' @family modeltools
 #' @export
-epict_opts_as_data_list <- function(pp = FALSE, likelihood = TRUE,
+epict_inference_opts <- function(pp = FALSE, likelihood = TRUE,
                                     debug = FALSE, output_loglik = FALSE) {
 
   data <- list(

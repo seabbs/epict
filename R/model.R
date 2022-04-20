@@ -72,6 +72,57 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
   return(priors[])
 }
 
+#' Format data for use with stan
+#'
+#' @return A list as required by stan.
+#' @inheritParams epict_obs_as_data_list
+#' @inheritParams epict_onset_obs_as_data_list
+#' @inheritParams epict_model_opts
+#' @inheritParams epict_inference_opts
+#' @inheritParams epict_formula_as_data_list
+#' @inheritParams epict_population_priors_as_data_list
+#' @inheritParams epict_individual_priors_as_data_list
+#' @family model
+#' @export
+epict_as_data_list <- function(
+  obs, 
+  ct_model = epict::subject_design(~1, obs),
+  adjustment_model = epict::test_design(~1, obs),
+  priors = epict::epict_priors(),
+  model_opts = epict::epict_model_opts()
+  inference_opts = epict::epict_inference_opts()
+) {
+  data <- enw_obs_as_data_list(obs)
+
+  data <- c(data, 
+    epict_onset_obs_as_data_list(obs, onsets = (model_opts$onsets == 1))
+  )
+
+  # Add model formula data
+  data <- c(
+    data,
+    epict_formula_as_data_list(
+      data,
+      ct_model = ct_model,
+      adjustment_model = adjustment_model
+    )
+  )
+
+  # Add model options
+  data <- c(
+    data,
+    model_opts,
+    inference_opts
+  )
+
+  # Add  priors
+  data <- c(
+    data,
+    epict_population_priors_as_data_list(priors),
+    epict_individual_priors_as_data_list(priors)
+  )
+  return(data)
+}
 
 #' Format data for use with stan
 #'
@@ -85,8 +136,8 @@ epict_to_stan <- function(obs,
                           priors = epict::epict_priors(),
                           individual_variation = 0.2,
                           individual_correlation = 1,
-                          censoring_threshold = 40, switch = TRUE,
-                          onsets = TRUE, incubation_period = get_inc_period(),
+                          censoring_threshold = NA, switch = TRUE,
+                          onsets = TRUE,
                           likelihood = TRUE, output_loglik = FALSE) {
   obs <- data.table::copy(obs)
   obs <- obs[order(id)]
@@ -95,21 +146,6 @@ epict_to_stan <- function(obs,
   tests_per_id <- obs[, .(n = .N), by = "id"]$n
 
   stan_data <- list(
-    N = obs[, .N],
-    P = length(unique(obs$id)),
-    id = obs[, id],
-    tests_per_id = tests_per_id,
-    cum_tests_per_id = cumsum(tests_per_id),
-    day_rel = obs[, t],
-    ct_value = obs$ct_value,
-    ncensored = length(obs[uncensored == 0, obs]),
-    censored = obs[uncensored == 0, obs],
-    nuncensored = length(obs[uncensored == 1, obs]),
-    uncensored = obs[uncensored == 1, obs],
-    uncensored_by_test = obs[, uncensored],
-    t_e = 0,
-    c_int = censoring_threshold,
-    c_lod = censoring_threshold,
     K = ifelse(switch, 5, 3),
     ind_var_sd = individual_variation,
     ind_var_m = as.numeric(individual_variation != 0),
@@ -118,14 +154,9 @@ epict_to_stan <- function(obs,
     lkj_prior = ifelse(
       is.na(individual_correlation), 0, individual_correlation
     ),
-    lmean = incubation_period$inc_mean_p,
-    lsd = incubation_period$inc_sd_p,
-    likelihood = as.numeric(likelihood),
-    output_loglik = as.numeric(output_loglik),
     preds = ncol(ct_model$design) - 1,
     preds_sd = ct_model$preds_sd,
     design = ct_model$design,
-    switch = as.numeric(switch),
     adj_t_p = ct_model$params[["t_p"]],
     adj_t_s = min(ct_model$params[["t_s"]], as.numeric(switch)),
     adj_t_clear = ct_model$params[["t_clear"]],
