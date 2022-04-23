@@ -7,7 +7,19 @@
 epict_obs_as_list(obs)
 }
 \arguments{
-\item{obs}{DESCRIPTION.}
+\item{obs}{A data.frame with the following variables:
+\itemize{
+\item id: An integer vector uniquely identifying eahc infection.
+\item test_id: An integer vector uniquely identiying each test
+\item ct_value: Numeric cycle threshold value.
+\item t: Relative (to a baseline) time of the test yielding a Ct value.
+\item t_rel_uncensored: Time of test relative to the first uncensored Ct value
+for that id.
+\item onset_t: Relative (to a baseline) time of onset for each infection
+\item onset_t_rel_uncensored: Time of onset relative to the first uncensored Ct
+value for that id. (optional). NA if unavailable/asymptomatic.
+\item censored: Logical, indicating if the Ct has been censored.
+}}
 }
 \value{
 A list as required by stan.

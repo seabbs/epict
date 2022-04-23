@@ -4,9 +4,9 @@
 \name{epict-package}
 \alias{epict}
 \alias{epict-package}
-\title{epict: Cycle Threshold Modelling}
+\title{epict: Flexible Cycle Threshold Modelling}
 \description{
-Cycle threshold modelling
+Flexible piecewise modelling of cycle thresholds with adjustment for varying intercepts and linear scales.
 }
 \seealso{
 Useful links:

@@ -201,9 +201,14 @@ epict_clean_factors <- function(vars = c()) {
   }
   return(clean_obs[])
 }
-#' Check processed observations meet package specifications
-#' 
-#' Required processed data format:
+
+#' Check proccessed observations meet the package specification
+#'
+#' Checks the available proccessed observastionsfor required variables and
+#' returns informative errors, warnings, and messages about the structure of
+#' the observations.
+#'
+#' @param obs A data.frame with the following variables:
 #'  - id: An integer vector uniquely identifying eahc infection.
 #'  - test_id: An integer vector uniquely identiying each test
 #'  - ct_value: Numeric cycle threshold value.
@@ -214,12 +219,10 @@ epict_clean_factors <- function(vars = c()) {
 #'  - onset_t_rel_uncensored: Time of onset relative to the first uncensored Ct
 #' value for that id. (optional). NA if unavailable/asymptomatic.
 #'  - censored: Logical, indicating if the Ct has been censored.
-#'
-#' @param obs DESCRIPTION.
 #' 
-#' @param check_onsets DESCRIPTION.
-#'
-#' @return RETURN_DESCRIPTION
+#' @return A `data.table` of observations ready for use in [epict()] and other 
+#' package functions.
+#' @inheritParams epict_check_raw_obs
 #' @author Sam Abbott
 #' @export
 epict_check_obs <- function(obs, check_onsets = FALSE) {

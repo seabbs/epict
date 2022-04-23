@@ -2,20 +2,12 @@
 % Please edit documentation in R/preprocess-obs.R
 \name{epict_check_obs}
 \alias{epict_check_obs}
-\title{Check processed observations meet package specifications}
+\title{Check proccessed observations meet the package specification}
 \usage{
 epict_check_obs(obs, check_onsets = FALSE)
 }
 \arguments{
-\item{obs}{DESCRIPTION.}
-
-\item{check_onsets}{DESCRIPTION.}
-}
-\value{
-RETURN_DESCRIPTION
-}
-\description{
-Required processed data format:
+\item{obs}{A data.frame with the following variables:
 \itemize{
 \item id: An integer vector uniquely identifying eahc infection.
 \item test_id: An integer vector uniquely identiying each test
@@ -27,7 +19,16 @@ for that id.
 \item onset_t_rel_uncensored: Time of onset relative to the first uncensored Ct
 value for that id. (optional). NA if unavailable/asymptomatic.
 \item censored: Logical, indicating if the Ct has been censored.
+}}
 }
+\value{
+A \code{data.table} of observations ready for use in \code{\link[=epict]{epict()}} and other
+package functions.
+}
+\description{
+Checks the available proccessed observastionsfor required variables and
+returns informative errors, warnings, and messages about the structure of
+the observations.
 }
 \author{
 Sam Abbott
