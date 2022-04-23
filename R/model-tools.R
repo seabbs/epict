@@ -2,13 +2,14 @@
 #'
 #' @param onsets Logical, defaults to `TRUE`. Should symptom onsets 
 #' observations be included in the model if available.
-#' [epict_obs_as_data_list()].
-#' @inheritParams epict_check_obs
+#' 
 #' @return A list as required by stan.
+#' @inheritParams epict_check_obs
 #' @family modeltools
 #' @importFrom data.table copy
+#' @author Sam Abbott
 #' @export
-epict_onset_obs_as_data_list <- function(obs, onsets = TRUE) {
+epict_onset_obs_as_list <- function(obs, onsets = TRUE) {
 
   obs <- data.table::copy(obs)
   P <- length(unique(obs$id))
@@ -44,20 +45,23 @@ epict_onset_obs_as_data_list <- function(obs, onsets = TRUE) {
 
 #' Format observed data for use with stan
 #'
+#' Formats observations for use in the stan model. Note that the
+#' censoring limit is set internally in this function based on the minimum
+#' cycle threshold value present for a censored test.
 #' 
-#' @inheritParams epict_check_obs
 #' @return A list as required by stan.
+#' @inheritParams epict_check_obs
 #' @family modeltools
 #' @importFrom data.table copy
+#' @author Sam Abbott
 #' @export
-epict_obs_as_data_list <- function(obs) {
+epict_obs_as_list <- function(obs) {
 
   obs <- data.tabler::copy(obs)[order(id)]
   obs[, obs_id := 1:.N]
   tests_per_id <- obs[, .(n = .N), by = "id"]$n
 
-  # Format indexing and observed data
-  # See stan code for docs on what all of these are
+  # See stan code for docs
   data <- list(
     N = obs[, .N],
     P = length(unique(obs$id)),
@@ -76,7 +80,23 @@ epict_obs_as_data_list <- function(obs) {
   return(data)
 }
 
-params_avail_to_adjust <- function(params = "all") {
+#' Select the parameters to adjust in the piecewise model
+#'
+#' @param params A character string indicating the paramters
+#' to adjust in the piecewise model. Defaults to "all". Options 
+#' are: the time at peak ("t_p"), time at switch ("t_p"),
+#' time at clearance ("t_clear"), Cycle threshold (Ct) at peak ("c_p"),
+#' Ct at switch ("c_s"), incubation period mean ("inc_mean"),
+#' and incubation period standard deviation ("inc_sd"). 
+#'
+#' @return A named list of parameters to adjust in the piecewise 
+#' model.
+#' @importFrom purrr map
+#' @author Sam Abbott
+#' @export
+#' @examples
+#' select_piecewise_parameters()
+select_piecewise_parameters <- function(params = "all") {
   choices <- c("t_p", "t_s", "t_clear", "c_p", "c_s", "inc_mean", "inc_sd")
   params <- match.arg(params, c(choices, "all"), several.ok = TRUE)
   if (any(params %in% "all")) {
@@ -88,25 +108,68 @@ params_avail_to_adjust <- function(params = "all") {
   return(params_list)
 }
 
-test_design <- function(formula = ~1, data, preds_sd = 1) {
-  design <- model.matrix(formula, data = data)
+#' Specify the cycle threshold adjustment model formula 
+#'
+#' @param formula A model formula defaulting to `~1`.
+#' 
+#' @param beta_default A vector of length two containing the 
+#' default mean and standard deviation to use as the prior 
+#' for all covariate effect sizes.
+#' 
+#' @return A named list including the design matrix ("design") 
+#' and a `data.table` of priors for covariate effects ("beta").
+#' @inheritParams epict_check_obs
+#' @inheritParams select_piecewise_parameters
+#' @importFrom data.table CJ
+#' @export
+#' @author Sam Abbott
+piecewise_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1),
+                              params = "all") {
+  params <- select_piecewise_parameters(params)
+
+  subjects <- extract_subjects(obs)
+  design <- model.matrix(formula, data = subjects)
+
+  beta <- data.table::CJ(
+    parameter = params,
+    effect = colnames(design)[-1]
+  )
+
+  beta[, `:=`(
+    mean = beta_default[1],
+    sd = beta_default[2]
+  )]
 
   out <- list(
-    design = design, preds_sd = preds_sd
+    design = design, subjects = subjects, params = params,
+    beta = beta
   )
   return(out)
 }
 
-subject_design <- function(formula = ~1, data, preds_sd = 0.1,
-                                 params = "all") {
-  params <- params_avail_to_adjust(params)
+#' Specify the cycle threshold adjustment model formula 
+#' 
+#' @return A named list including the design matrix ("design") 
+#' and a `data.table` of priors for covariate effects ("beta").
+#' @inheritParams piecewise_formula
+#' @export
+#' @importFrom data.table CJ
+#' @author Sam Abbott
+adjustment_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1)) {
+  design <- model.matrix(formula, data = obs)
+  
+  beta <- data.table::CJ(
+    parameter = c("ct_shift", "ct_scale"),
+    effect = colnames(design)[-1]
+  )
 
-  subjects <- extract_subjects(data)
-  design <- model.matrix(formula, data = subjects)
+  beta[, `:=`(
+    mean = beta_default[1],
+    sd = beta_default[2]
+  )]
 
   out <- list(
-    design = design, subjects = subjects, params = params,
-    preds_sd = preds_sd
+    design = design, beta = beta
   )
   return(out)
 }
@@ -128,6 +191,7 @@ subject_design <- function(formula = ~1, data, preds_sd = 0.1,
 #' @return A list as required by stan.
 #' @inheritParams epict_opts_as_data_list
 #' @family modeltools
+#' @author Sam Abbott
 #' @export
 epict_model_opts <- function(onsets = TRUE, switch = FALSE,
                              latent_infections = TRUE,
@@ -142,61 +206,81 @@ epict_model_opts <- function(onsets = TRUE, switch = FALSE,
     onsets = as.numeric(onsets),
     latent_inf = as.numeric(latent_infections),
     ind_var_m = as.numeric(variation != "none"),
-    ind_corr = as.numeric(variation == "correlated")
+    ind_corr = as.numeric(variation == "correlated"),
+    K = ifelse(switch, 5, 3)
   )
   return(opts)
 }
 
 #' Format formula data for use with stan
+#' 
 #' @param model_opts A list of Cycle threshold model options as returned
 #' by [epict_ct_model_opts()].
 #' 
 #' @param piecewise_formula A list describing the piecewise linear cycle threshold
-#' formula as described by [subject_design()].
+#' formula as described by [piecewise_formula()].
 #'
-#' @param adjustment_model A list describing the cycle threshold linear
-#' adjustment formula (shift and scale) as described by [test_design()].
+#' @param adjustment_formula A list describing the cycle threshold linear
+#' adjustment formula (shift and scale) as described by [adjustment_formula()].
 #'
 #' @return A list as required by stan.
-#' @inheritParams epict_opts_as_data_list
+#' @inheritParams epict_opts_as_list
+#' @importFrom data.table as.data.table
 #' @family modeltools
+#' @author Sam Abbott
 #' @export
-epict_formula_as_data_list <- function(piecewise_formula,
-                                       adjustment_formula,
-                                       model_opts = epict::model_opts()) {
+epict_formula_as_list <- function(piecewise_formula, adjustment_formula,
+                                  model_opts = epict::model_opts()) {
+  piecewise_formula$beta <- data.table::as.data.table(piecewise_formula$beta)
+  adjustment_formula$beta <- data.table::as.data.table(adjustment_formula$beta)
+
   data <- list(
       preds = ncol(piecewise_formula$design) - 1,
-      preds_sd = piecewise_formula$preds_sd,
       design = piecewise_formula$design,
       adj_t_p = piecewise_formula$params[["t_p"]],
+      beta_t_p_m = piecewise_formula$beta[parameter == "t_p"]$mean,
+      beta_t_p_sd = piecewise_formula$beta[parameter == "t_p"]$sd,
       adj_t_s = min(
         piecewise_formula$params[["t_s"]], model_opts$switch
       ),
+      beta_t_s_m = piecewise_formula$beta[parameter == "t_s"]$mean,
+      beta_t_s_sd = piecewise_formula$beta[parameter == "t_s"]$sd,
       adj_t_clear = piecewise_formula$params[["t_clear"]],
+      beta_t_clear_m = piecewise_formula$beta[parameter == "t_clear"]$mean,
+      beta_t_clear_sd = piecewise_formula$beta[parameter == "t_clear"]$sd,
       adj_c_p = piecewise_formula$params[["c_p"]],
+      beta_c_p_m = piecewise_formula$beta[parameter == "c_p"]$mean,
+      beta_c_p_sd = piecewise_formula$beta[parameter == "c_p"]$sd,
       adj_c_s = min(
         piecewise_formula$params[["c_s"]], model_opts$switch
       ),
+      beta_c_s_m = piecewise_formula$beta[parameter == "c_s"]$mean,
+      beta_c_s_sd = piecewise_formula$beta[parameter == "c_s"]$sd,
       adj_inc_mean = piecewise_formula$params[["inc_mean"]],
-      adj_inc_sd = piecewise_formula$params[["inc_sd"]]
+      beta_inc_mean_m = piecewise_formula$beta[parameter == "inc_mean"]$mean,
+      beta_inc_mean_sd = piecewise_formula$beta[parameter == "inc_mean"]$sd,
+      adj_inc_sd = piecewise_formula$params[["inc_sd"]],
+      beta_inc_sd_m = piecewise_formula$beta[parameter == "inc_sd"]$mean,
+      beta_inc_sd_sd = piecewise_formula$beta[parameter == "inc_sd"]$sd
   )
 
-  # Add adjustment formula data
   data <- c(fdata, list(
     adj_ct = as.numeric(
       (ncol(adjustment_formula$design) - 1) > 0
     ),
     ct_preds = ncol(adjustment_formula$design) - 1,
-    ct_preds_sd = adjustment_formula$preds_sd,
     ct_design = adjustment_formula$design
+    beta_ct_shift_m = adjustment_formula$beta[parameter == "ct_shift"]$mean,
+    beta_ct_shift_sd = adjustment_formula$beta[parameter == "ct_shift"]$sd,
+    bt_ct_scale_m = adjustment_formula$beta[parameter == "ct_scale"]$mean,
+    beta_scale_sd = adjustment_formula$beta[parameter == "ct_scale"]$sd
   ))
   return(data)
 }
 
-#' Format population priors for use in stan
+#' Format population-level priors for use in stan
 #'
-#'
-#' @param priors A data.table of population priors as produced
+#' @param priors A data.table of population-level priors as produced
 #' by [epict_priors()].
 #'
 #' @return A list of named priors with the mean and standard deivation
@@ -206,32 +290,41 @@ epict_formula_as_data_list <- function(piecewise_formula,
 #' @importFrom data.table copy
 #' @importFrom purrr map
 #' @export
+#' @author Sam Abbott
 #' @examples
 #' priors <- epict_priors()
-#' epict_population_priors_as_data_list(priors)
-epict_population_priors_as_data_list <- function(priors) {
+#' epict_population_priors_as_list(priors)
+epict_population_priors_as_list <- function(priors) {
   priors <- data.table::copy(priors)
   priors[, variable := paste0(variable, "_p")]
   priors <- priors[, .(variable, intercept_mean, intercept_sd)]
   priors <- split(priors, by = "variable", keep.by = FALSE)
   priors <- purrr::map(priors, ~ as.vector(t(.)))
+  priors <- purrr::map(priors, ~ .[!is.na(.)])
   return(priors)
 }
 
-#' Format 
+#' Format individual-level priors for use in stan
 #'
+#' @param priors A data.table of individual-level priors as produced
+#' by [epict_priors()].
 #'
-#' @return RETURN_DESCRIPTION
+#' @return A list of named priors with the mean and standard deivation
+#' for each.
+#' 
 #' @family modeltools
 #' @importFrom data.table copy
 #' @importFrom purrr map
 #' @export
+#' @author Sam Abbott
 #' @examples
 #' priors <- epict_priors()
-#' epict_individual_priors_as_data_list(priors)
-epict_individual_priors_as_data_list <- function(priors) {
+#' epict_individual_priors_as_list(priors)
+epict_individual_priors_as_list <- function(priors) {
   priors <- data.table::copy(priors)
-  priors[, variable := paste0(variable, "_p")]
+  default_priors <- epict::epict_priors()
+  default_priors[, .(variable)]
+  priors <- default_priors[priors, on = "variable"]
   priors <- priors[!is.na(individual_variation_mean)]
   priors <- priors[, 
     .(variable, individual_variation_mean, individual_variation_sd)
@@ -259,9 +352,10 @@ epict_individual_priors_as_data_list <- function(priors) {
 #' @return A list as required by stan.
 #' @importFrom data.table fcase
 #' @family modeltools
+#' @author Sam Abbott
 #' @export
 epict_inference_opts <- function(pp = FALSE, likelihood = TRUE,
-                                    debug = FALSE, output_loglik = FALSE) {
+                                 debug = FALSE, output_loglik = FALSE) {
 
   data <- list(
     debug = as.numeric(debug),
@@ -296,6 +390,7 @@ epict_inference_opts <- function(pp = FALSE, likelihood = TRUE,
 #' @return A data frame of priors
 #' @family modeltools
 #' @importFrom data.table setDT
+#' @author Sam Abbott
 #' @export
 epict_posterior_as_prior <- function(fit, priors = epict::epict_priors(),
                                      variables = c(), sub = "_int",  scale = 5) {

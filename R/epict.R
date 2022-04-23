@@ -1,48 +1,43 @@
-#' @title Model Cycle Thresholds
+#' Model Cycle Thresholds
 #'
-#' @description Provides a user friendly interface around package functionality
-#' to model cycle tresholds, and symptom onsets from observed preprocessed
-#' data, a piecewise linear model, and a global adjustment model.
+#' Provides a user friendly interface around package functionality
+#' to model cycle thresholds, and symptom onsets from observed preprocessed
+#' data, a piecewise linear model, and a linear adjustment model.
 #'
-#' @param as_data_list PARAM_DESCRIPTION
+#' @param convert_to_list Convert observations and model settings into
+#' a list for use in stan. Defaults to using [epict_convert_to_list()].
 #'
-#' @param inits PARAM DESCRIPTION
-#'
+#' @param inits A function that combined with a list of data returns 
+#' sample initial conditions for use during model fitting based
+#' on model priors. Defaults to [epict_inits()]
 #'
 #' @param ... Additional arguments passed to [cmdstanr].
 #'
 #' @return A [cmdstanr] model fit containing posterior samples
 #'
-#' @inheritParams epict_to_stan
+#' @inheritParams epict_convert_to_list
 #' @inheritParams epict_inits
 #' @family epict
 #' @export
 epict <- function(obs,
                   model = epict_model(),
-                  as_data_list = epict_to_stan,
+                  piecewise_formula = epict::piecewise_formula(~1, obs),
+                  adjustment_formula = epict::adjustment_formula(~1, obs),
+                  priors = epict::epict_priors(),
+                  model_opts = epict::epict_model_opts()
+                  inference_opts = epict::epict_inference_opts()
+                  convert_to_list = epict_convert_to_list,
                   inits = epict_inits,
-                  ct_model = subject_design(~1, obs),
-                  adjustment_model = test_design(~1, obs),
-                  individual_variation = 0.2,
-                  individual_correlation = 1,
-                  censoring_threshold = 40, switch = TRUE,
-                  onsets = TRUE, incubation_period = get_inc_period(),
-                  likelihood = TRUE, output_loglik = FALSE, ...) {
-  stan_data <- as_data_list(
-    obs,
-    ct_model = ct_model,
-    adjustment_model = adjustment_model,
-    individual_variation = individual_variation,
-    individual_correlation = individual_correlation,
-    censoring_threshold = censoring_threshold,
-    switch = switch,
-    onsets = onsets, incubation_period = incubation_period,
-    likelihood = likelihood, output_loglik = output_loglik
+                  ...) {
+  model_list <- convert_to_list(
+    obs,  piecewise_formula = piecewise_formula, 
+    adjustment_formula = adjustment_formula, priors = priors,
+    model_opts = model_opts, inference_opts = inference_opts
   )
 
   fit <- model$sample(
-    data = stan_data,
-    init = inits(stan_data),
+    data = model_list,
+    init = inits(model_list),
     ...
   )
   class(fit) <- c("epict", class(fit))

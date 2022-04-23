@@ -78,7 +78,7 @@ data {
   vector[K] ind_var_mean; // Mean of individual variation
   vector[K] ind_var_sd; // Standard deviation of inividual variation
   int ind_corr; // Should individual variation be modelled with correlation
-  real lkj_prior; // LKJ prior for individual level variation
+  real lkj_p; // LKJ prior for individual level variation
   // Ct adjustment model parameters
   int adj_ct; // Should cts be adjusted
   int ct_preds; // Number of predictors for CT adjustment
@@ -234,7 +234,7 @@ model {
   }
   // LKJ prior on correlation between individual level dynamics
   if (ind_corr) {
-    L_Omega ~ lkj_corr_cholesky(lkj_prior);
+    L_Omega ~ lkj_corr_cholesky(lkj_p);
   }
   // Variation in observation model
   sigma ~ normal(sigma_p[1], sigma_p[2]) T[0,];

@@ -10,7 +10,7 @@ summarise_pop_pp <- function(fit) {
 }
 
 summarise_coeff_pp <- function(fit, params, exponentiate = FALSE) {
-  params <- params_avail_to_adjust(params)
+  params <- select_piecewise_parameters(params)
   params <- names(params[purrr::map_lgl(params, ~ . == 1)])
 
   draws <- fit$summary(

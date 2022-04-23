@@ -1,5 +1,8 @@
 #' Default model priors
 #'
+#' @param individual_variation A vector of length two specifying the 
+#' default mean and standard deviation of individual-level variation.
+#' 
 #' @return A data frame summarising the model priors.
 #'
 #' @importFrom data.table data.table
@@ -20,7 +23,8 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "t_clear",
       "inc_mean",
       "inc_sd",
-      "sigma"
+      "sigma",
+      "lkj"
     ),
     name = c(
       "Time between infection and first positive test",
@@ -33,6 +37,7 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Mean of the incubation period",
       "Standard deviation of the incubation period",
       "Observation standard deviation"
+      "Lewandowski-Kurowicka-Joe distribution"
     ),
     detail = c(
       "Offset by onset if available",
@@ -45,6 +50,8 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Parameterised as a log-normal distribution",
       "Parameterised as a log-normal distribution",
       "Assuming a normal error model"
+      "Prior used for the individual-level correlation matrix. There is 
+      one parameter which at 1 represents a uniform prior. Smaller values indicate strong correlations, and larger values weaker correlations"
     ),
     distribution = c(
       "Normal (truncated by onset or 0)",
@@ -57,9 +64,10 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Normal",
       "Zero truncated normal",
       "Zero truncated normal"
+      "Lewandowski-Kurowicka-Joe (LKJ) distribution"
     ),
-    intercept_mean = c(5, 10, 0, 1.61, 0, 1.61, 2.3, 1.62, 0.42, 0),
-    intercept_sd = c(5, 10, 1, 0.5, 1, 0.5, 0.5, 0.06, 0.07, 2)
+    intercept_mean = c(5, 10, 0, 1.61, 0, 1.61, 2.3, 1.62, 0.42, 2, 1),
+    intercept_sd = c(5, 10, 1, 0.5, 1, 0.5, 0.5, 0.06, 0.07, 2, NA)
   )
 
   priors[, `:=`(
@@ -67,143 +75,69 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
     individual_variation_sd = individual_variation[2]
   )]
 
-  priors[variable %in% c("sigma", "c_int"), individual_variation_mean := NA]
-  priors[variable %in% c("sigma", "c_int"), individual_variation_sd := NA]
+  priors[
+    variable %in% c("sigma", "c_int", "lkj"), individual_variation_mean := NA
+  ]
+  priors[
+    variable %in% c("sigma", "c_int", "lkj"), individual_variation_sd := NA
+  ]
   return(priors[])
 }
 
-#' Format data for use with stan
+#' Format observations and model settings for use with stan
 #'
 #' @return A list as required by stan.
-#' @inheritParams epict_obs_as_data_list
-#' @inheritParams epict_onset_obs_as_data_list
+#' 
+#' @inheritParams epict_obs_as_list
+#' @inheritParams epict_onset_obs_as_list
 #' @inheritParams epict_model_opts
 #' @inheritParams epict_inference_opts
-#' @inheritParams epict_formula_as_data_list
-#' @inheritParams epict_population_priors_as_data_list
-#' @inheritParams epict_individual_priors_as_data_list
+#' @inheritParams epict_formula_as_list
+#' @inheritParams epict_population_priors_as_list
+#' @inheritParams epict_individual_priors_as_list
 #' @family model
+#' @author Sam Abbott
 #' @export
-epict_as_data_list <- function(
+epict_convert_to_list <- function(
   obs, 
-  ct_model = epict::subject_design(~1, obs),
-  adjustment_model = epict::test_design(~1, obs),
+  piecewise_formula = epict::piecewise_formula(~1, obs),
+  adjustment_formula = epict::adjustment_formula(~1, obs),
   priors = epict::epict_priors(),
   model_opts = epict::epict_model_opts()
   inference_opts = epict::epict_inference_opts()
 ) {
-  data <- enw_obs_as_data_list(obs)
+  data <- enw_obs_as_list(obs)
 
   data <- c(data, 
-    epict_onset_obs_as_data_list(obs, onsets = (model_opts$onsets == 1))
+    epict_onset_obs_as_list(obs, onsets = (model_opts$onsets == 1))
   )
 
-  # Add model formula data
   data <- c(
     data,
-    epict_formula_as_data_list(
+    epict_formula_as_list(
       data,
-      ct_model = ct_model,
-      adjustment_model = adjustment_model
+      piecewise_formula = piecewise_formula,
+      adjustment_formula = adjustment_formula
     )
   )
 
-  # Add model options
   data <- c(
     data,
     model_opts,
     inference_opts
   )
 
-  # Add  priors
   data <- c(
     data,
-    epict_population_priors_as_data_list(priors),
-    epict_individual_priors_as_data_list(priors)
+    epict_population_priors_as_list(priors),
+    epict_individual_priors_as_list(priors)
   )
   return(data)
 }
 
-#' Format data for use with stan
-#'
-#' @return A list as required by stan.
-#' @family model
-#' @importFrom data.table copy
-#' @export
-epict_to_stan <- function(obs,
-                          ct_model = subject_design(~1, obs),
-                          adjustment_model = test_design(~1, obs),
-                          priors = epict::epict_priors(),
-                          individual_variation = 0.2,
-                          individual_correlation = 1,
-                          censoring_threshold = NA, switch = TRUE,
-                          onsets = TRUE,
-                          likelihood = TRUE, output_loglik = FALSE) {
-  obs <- data.table::copy(obs)
-  obs <- obs[order(id)]
-  obs[, obs := 1:.N]
-
-  tests_per_id <- obs[, .(n = .N), by = "id"]$n
-
-  stan_data <- list(
-    K = ifelse(switch, 5, 3),
-    ind_var_sd = individual_variation,
-    ind_var_m = as.numeric(individual_variation != 0),
-    ind_corr = as.numeric(!is.na(individual_correlation) &&
-      individual_variation != 0),
-    lkj_prior = ifelse(
-      is.na(individual_correlation), 0, individual_correlation
-    ),
-    preds = ncol(ct_model$design) - 1,
-    preds_sd = ct_model$preds_sd,
-    design = ct_model$design,
-    adj_t_p = ct_model$params[["t_p"]],
-    adj_t_s = min(ct_model$params[["t_s"]], as.numeric(switch)),
-    adj_t_clear = ct_model$params[["t_clear"]],
-    adj_c_p = ct_model$params[["c_p"]],
-    adj_c_s = min(ct_model$params[["c_s"]], as.numeric(switch)),
-    adj_inc_mean = ct_model$params[["inc_mean"]],
-    adj_inc_sd = ct_model$params[["inc_sd"]],
-    adj_ct = as.numeric(
-      (ncol(adjustment_model$design) - 1) > 0
-    ),
-    ct_preds = ncol(adjustment_model$design) - 1,
-    ct_preds_sd = adjustment_model$preds_sd,
-    ct_design = adjustment_model$design
-  )
-  if (is.null(obs$onset_time) | !onsets) {
-    stan_data <- c(stan_data, list(
-      any_onsets = 0,
-      onset_avail = rep(0, stan_data$P),
-      onset_time = rep(0, stan_data$P),
-      onset_window = rep(0, stan_data$P)
-    ))
-  } else {
-    onset_data <- suppressWarnings(
-      obs[,
-        .(onset_time = min(onset_time, na.rm = TRUE), id),
-        by = "id"
-      ][
-        is.infinite(onset_time), onset_time := NA
-      ]
-    )
-    stan_data <- c(stan_data, list(
-      any_onsets = 1,
-      onset_avail = as.numeric(!is.na(onset_data$onset_time)),
-      nonsets = sum(as.numeric(!is.na(onset_data$onset_time))),
-      ids_with_onsets = onset_data[!is.na(onset_time), id],
-      onset_time = ifelse(is.na(onset_data$onset_time),
-                            0, onset_data$onset_time),
-      onset_window = rep(1, stan_data$P)
-    ))
-  }
-
-  return(stan_data)
-}
-
 #' Set up initial conditions for model
 #'
-#' @param data A list of data as produced by [epict_to_stan()].
+#' @param data A list of data as produced by [epict_as_list()].
 #'
 #' @return A function that when called returns a list of initial conditions
 #' for the package stan models.
@@ -211,8 +145,9 @@ epict_to_stan <- function(obs,
 #' @family model
 #' @importFrom purrr map_dbl
 #' @importFrom truncnorm rtruncnorm
+#' @author Sam Abbott
 #' @export
-epict_inits <- function(data) {
+epict_inits <- function(data, scale = 0.1) {
   function() {
     inits <- list(
       t_inf = purrr::map_dbl(
@@ -229,9 +164,11 @@ epict_inits <- function(data) {
       ),
       c_p_int = rnorm(1, 0, 1),
       t_p_int = rnorm(1, 1.61, 0.5),
-      t_clear_mean = rnorm(1, 2.3, 0.5),
-      ind_var = abs(rnorm(data$K, 0, data$ind_var_sd * 0.1)),
-      ind_eta = matrix(rnorm(data$P * data$K, 0, 0.1), nrow = data$K, ncol = data$P),
+      t_clear_int = rnorm(1, 2.3, 0.5),
+      ind_var = abs(rnorm(data$K, 0, data$ind_var_sd * scale)),
+      ind_eta = matrix(
+        rnorm(data$P * data$K, 0, 1), nrow = data$K, ncol = data$P
+      ),
       sigma = truncnorm::rtruncnorm(1, a = 0, mean = 5, sd = 0.5)
     )
 
@@ -242,32 +179,50 @@ epict_inits <- function(data) {
 
     if (data$preds > 0) {
       if (data$adj_t_p > 0) {
-        inits$beta_t_p <- rnorm(data$preds, 0, 0.01)
+        inits$beta_t_p <- rnorm(
+          data$preds, data$beta_t_p_m, data$beta_t_p_sd * scale
+        )
       }
       if (data$adj_t_s > 0) {
-        inits$beta_t_s <- rnorm(data$preds, 0, 0.01)
+        inits$beta_t_s <- rnorm(
+          data$preds, data$beta_t_s_m, data$beta_t_s_sd * scale
+        )
       }
       if (data$adj_t_clear > 0) {
-        inits$beta_t_clear <- rnorm(data$preds, 0, 0.01)
+        inits$beta_t_clear <- rnorm(
+          data$preds, data$beta_t_clear_m, data$beta_t_clear_sd * scale
+        )
       }
       if (data$adj_c_p > 0) {
-        inits$beta_c_p <- rnorm(data$preds, 0, 0.01)
+        inits$beta_c_p <- rnorm(
+          data$preds, data$beta_c_p_m, data$beta_c_p_sd * scale
+        )
       }
       if (data$adj_c_s > 0) {
-        inits$beta_c_s <- rnorm(data$preds, 0, 0.01)
+        inits$beta_c_s <- rnorm(
+          data$preds, data$beta_c_s_m, data$beta_c_s_sd * scale
+        )
       }
       if (data$adj_inc_mean > 0) {
-        inits$beta_inc_mean <- rnorm(data$preds, 0, 0.01)
+        inits$beta_inc_mean <- rnorm(
+          data$preds, data$beta_inc_mean_m, data$beta_inc_mean_sd * scale
+        )
       }
       if (data$adj_inc_sd > 0) {
-        inits$beta_inc_sd <- rnorm(data$preds, 0, 0.01)
+        inits$beta_inc_sd <- rnorm(
+          data$preds, data$beta_inc_sd_m, data$beta_inc_sd_sd * scale
+        )
       }
     }
 
     if (data$ct_preds > 0) {
       if (data$adj_ct > 0) {
-        inits$beta_ct_shift <- rnorm(data$ct_preds, 0, 0.001)
-        inits$beta_ct_scale <- rnorm(data$ct_preds, 0, 0.001)
+        inits$beta_ct_shift <- rnorm(
+          data$ct_preds, data$beta_ct_shift_m, data$beta_ct_shift_sd * scale
+        )
+        inits$beta_ct_scale <- rnorm(
+          data$ct_preds, data$beta_ct_scale_m, data$beta_ct_scale_sd * scale
+        )
       }
     }
 
@@ -298,6 +253,10 @@ epict_inits <- function(data) {
 #' the `threads_per_chain` argument when model fitting using [epict()] and is
 #' not currently supported in model.
 #'
+#' @param stanc_options A list of options to pass to the `stanc_options` of
+#' [cmdstanr::cmdstan_model()]. By default "01" is passed which specifies simple
+#' optimisations should be done by the prior to compilation.
+#' 
 #' @param verbose Logical, defaults to `TRUE`. Should verbose
 #' messages be shown.
 #' 
@@ -312,7 +271,8 @@ epict_inits <- function(data) {
 #' mod <- epict_model()
 #' mod
 epict_model <- function(model, include,
-                        compile = TRUE, threads = FALSE, verbose = TRUE, ...) {
+                        compile = TRUE, threads = FALSE, 
+                        stanc_options = list("O1"), verbose = TRUE, ...) {
   if (missing(model)) {
     model <- "stan/model.stan"
     model <- system.file(model, package = "epict")
@@ -325,7 +285,7 @@ epict_model <- function(model, include,
     if (verbose) {
       model <- cmdstanr::cmdstan_model(model,
         include_paths = include,
-        stanc_options = list("O1"),
+        stanc_options = stanc_options,
         cpp_options = list(
           stan_threads = threads
         ),
