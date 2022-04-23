@@ -116,8 +116,8 @@ subject_design <- function(formula = ~1, data, preds_sd = 0.1,
 #' @param switch Logical, default to `FALSE`. Should a secondary breakpoint be
 #' included in the piecewise linear Cycle threshold model.
 #' 
-#' @param ct_model_opts A list of Cycle threshold model options as returned
-#' by [epict_ct_model_opts()].
+#' @param latent_infections Logical, defaults to `TRUE`. Should latent time of
+#' infection be modelled and used to adjust time from first positive test.
 #' 
 #' @param variation A character string indicating the type of individual level
 #' variation to include. Defaults to "correlated" (a random effect with
@@ -130,6 +130,7 @@ subject_design <- function(formula = ~1, data, preds_sd = 0.1,
 #' @family modeltools
 #' @export
 epict_model_opts <- function(onsets = TRUE, switch = FALSE,
+                             latent_infections = TRUE,
                              variation = "correlated") {
   variation <- match.arg(
     variation, 
@@ -139,8 +140,9 @@ epict_model_opts <- function(onsets = TRUE, switch = FALSE,
   data <- list(
     switch = as.numeric(switch),
     onsets = as.numeric(onsets),
+    latent_inf = as.numeric(latent_infections),
     ind_var_m = as.numeric(variation != "none"),
-    ind_corr = as.numeric(variaiton == "correlated")
+    ind_corr = as.numeric(variation == "correlated")
   )
   return(opts)
 }

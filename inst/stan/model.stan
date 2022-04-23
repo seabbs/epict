@@ -71,6 +71,7 @@ data {
   vector[preds] beta_inc_sd_m; 
   vector[preds] beta_inc_sd_sd; 
   // Individual-level parameters
+  int latent_inf; // Should latent infection time be modelled?
   array[2] real t_inf_p; // Prior on infection time adjustment
   int K; //Number of parameters with individual level variation
   int ind_var_m; // Should inividual variation be modelled
@@ -119,7 +120,8 @@ parameters {
   real t_clear_int; // Intercept of the time virus is cleared
   real<lower = 0> sigma; // Variance parameter for oobservation model
   // Individual-level parameters
-  vector<lower = t_inf_bound>[P] t_inf; // Inferred time of infection
+  // Inferred time of infection
+  vector<lower = t_inf_bound>[latent_inf ? P : 0] t_inf; 
   // Cholesky_factored correlation matrix
   cholesky_factor_corr[ind_corr ? K : 0] L_Omega;
   vector<lower = 0>[ind_var_m ? K : 0] ind_var; // SD of individual variation
@@ -181,7 +183,11 @@ transformed parameters {
   // Make times absolute
   t_clear_abs = t_p + t_s + t_clear;
   // Adjust observed times since first test to be time since infection
-  inf_rel = day_rel + t_inf[id];
+  if (latent_inf) {
+    inf_rel = day_rel + t_inf[id];
+  }else{
+    inf_rel = day_rel;
+  }
   // Expected ct value given viral load parameters
   exp_ct = piecewise_ct_by_id(
     inf_rel, c_int, c_p, c_s, c_int, 0, t_p, t_s, t_clear_abs, id,
@@ -208,7 +214,9 @@ model {
   // Prior over possible infection times relative to first
   // positive test or symtom onset.
   // Assumes that the first positive test is not a false positive.
-  t_inf ~ normal(t_inf_mean, t_inf_p[2]); 
+  if (latent_inf) {
+    t_inf ~ normal(t_inf_mean, t_inf_p[2]); 
+  }
   // CT piecewise linear intercept parameters
   c_int ~ normal(c_int_mean, c_int_p[2]) T[c_lod, ];
   c_p_int ~ normal(c_p_p[1], c_p_p[2]); // Mean at 50% of switch value
