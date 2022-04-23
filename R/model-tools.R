@@ -189,7 +189,6 @@ adjustment_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1)) {
 #' individual level variation).
 #' 
 #' @return A list as required by stan.
-#' @inheritParams epict_opts_as_data_list
 #' @family modeltools
 #' @author Sam Abbott
 #' @export
@@ -214,17 +213,16 @@ epict_model_opts <- function(onsets = TRUE, switch = FALSE,
 
 #' Format formula data for use with stan
 #' 
-#' @param model_opts A list of Cycle threshold model options as returned
-#' by [epict_ct_model_opts()].
-#' 
 #' @param piecewise_formula A list describing the piecewise linear cycle threshold
 #' formula as described by [piecewise_formula()].
 #'
 #' @param adjustment_formula A list describing the cycle threshold linear
 #' adjustment formula (shift and scale) as described by [adjustment_formula()].
 #'
+#' @param model_opts A list of Cycle threshold model options as returned
+#' by [epict_ct_model_opts()].
+#' 
 #' @return A list as required by stan.
-#' @inheritParams epict_opts_as_list
 #' @importFrom data.table as.data.table
 #' @family modeltools
 #' @author Sam Abbott
@@ -269,7 +267,7 @@ epict_formula_as_list <- function(piecewise_formula, adjustment_formula,
       (ncol(adjustment_formula$design) - 1) > 0
     ),
     ct_preds = ncol(adjustment_formula$design) - 1,
-    ct_design = adjustment_formula$design
+    ct_design = adjustment_formula$design,
     beta_ct_shift_m = adjustment_formula$beta[parameter == "ct_shift"]$mean,
     beta_ct_shift_sd = adjustment_formula$beta[parameter == "ct_shift"]$sd,
     bt_ct_scale_m = adjustment_formula$beta[parameter == "ct_scale"]$mean,

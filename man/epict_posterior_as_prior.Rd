@@ -38,9 +38,15 @@ assuming they are independent normal
 }
 \seealso{
 Functions used to help convert models into the format required for stan
-\code{\link{epict_formula_as_data_list}()},
-\code{\link{epict_individual_priors_as_data_list}()},
-\code{\link{epict_opts_as_data_list}()},
-\code{\link{epict_population_priors_as_data_list}()}
+\code{\link{epict_formula_as_list}()},
+\code{\link{epict_individual_priors_as_list}()},
+\code{\link{epict_inference_opts}()},
+\code{\link{epict_model_opts}()},
+\code{\link{epict_obs_as_list}()},
+\code{\link{epict_onset_obs_as_list}()},
+\code{\link{epict_population_priors_as_list}()}
+}
+\author{
+Sam Abbott
 }
 \concept{modeltools}

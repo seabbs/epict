@@ -7,25 +7,37 @@
 epict(
   obs,
   model = epict_model(),
-  as_data_list = epict_to_stan,
+  piecewise_formula = epict::piecewise_formula(~1, obs),
+  adjustment_formula = epict::adjustment_formula(~1, obs),
+  priors = epict::epict_priors(),
+  model_opts = epict::epict_model_opts(),
+  inference_opts = epict::epict_inference_opts(),
+  convert_to_list = epict_convert_to_list,
   inits = epict_inits,
-  ct_model = subject_design(~1, obs),
-  adjustment_model = test_design(~1, obs),
-  individual_variation = 0.2,
-  individual_correlation = 1,
-  censoring_threshold = 40,
-  switch = TRUE,
-  onsets = TRUE,
-  incubation_period = get_inc_period(),
-  likelihood = TRUE,
-  output_loglik = FALSE,
   ...
 )
 }
 \arguments{
-\item{as_data_list}{PARAM_DESCRIPTION}
+\item{obs}{DESCRIPTION.}
 
-\item{inits}{PARAM DESCRIPTION}
+\item{piecewise_formula}{A list describing the piecewise linear cycle threshold
+formula as described by \code{\link[=piecewise_formula]{piecewise_formula()}}.}
+
+\item{adjustment_formula}{A list describing the cycle threshold linear
+adjustment formula (shift and scale) as described by \code{\link[=adjustment_formula]{adjustment_formula()}}.}
+
+\item{priors}{A data.table of population-level priors as produced
+by \code{\link[=epict_priors]{epict_priors()}}.}
+
+\item{model_opts}{A list of Cycle threshold model options as returned
+by \code{\link[=epict_ct_model_opts]{epict_ct_model_opts()}}.}
+
+\item{convert_to_list}{Convert observations and model settings into
+a list for use in stan. Defaults to using \code{\link[=epict_convert_to_list]{epict_convert_to_list()}}.}
+
+\item{inits}{A function that combined with a list of data returns
+sample initial conditions for use during model fitting based
+on model priors. Defaults to \code{\link[=epict_inits]{epict_inits()}}}
 
 \item{...}{Additional arguments passed to \link{cmdstanr}.}
 }
@@ -34,7 +46,7 @@ A \link{cmdstanr} model fit containing posterior samples
 }
 \description{
 Provides a user friendly interface around package functionality
-to model cycle tresholds, and symptom onsets from observed preprocessed
-data, a piecewise linear model, and a global adjustment model.
+to model cycle thresholds, and symptom onsets from observed preprocessed
+data, a piecewise linear model, and a linear adjustment model.
 }
 \concept{epict}

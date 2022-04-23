@@ -9,6 +9,7 @@ epict_model(
   include,
   compile = TRUE,
   threads = FALSE,
+  stanc_options = list("O1"),
   verbose = TRUE,
   ...
 )
@@ -27,6 +28,10 @@ be loaded and compiled using \code{\link[cmdstanr:cmdstan_model]{cmdstanr::cmdst
 support for multi-thread support in chain. Note that this requires the use of
 the \code{threads_per_chain} argument when model fitting using \code{\link[=epict]{epict()}} and is
 not currently supported in model.}
+
+\item{stanc_options}{A list of options to pass to the \code{stanc_options} of
+\code{\link[cmdstanr:cmdstan_model]{cmdstanr::cmdstan_model()}}. By default "01" is passed which specifies simple
+optimisations should be done by the prior to compilation.}
 
 \item{verbose}{Logical, defaults to \code{TRUE}. Should verbose
 messages be shown.}
@@ -47,8 +52,8 @@ mod
 }
 \seealso{
 Functions used for modelling
+\code{\link{epict_convert_to_list}()},
 \code{\link{epict_inits}()},
-\code{\link{epict_priors}()},
-\code{\link{epict_to_stan}()}
+\code{\link{epict_priors}()}
 }
 \concept{model}

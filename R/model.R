@@ -36,7 +36,7 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Time at clearance of infection",
       "Mean of the incubation period",
       "Standard deviation of the incubation period",
-      "Observation standard deviation"
+      "Observation standard deviation",
       "Lewandowski-Kurowicka-Joe distribution"
     ),
     detail = c(
@@ -49,7 +49,7 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Relative to time at peak and switch C",
       "Parameterised as a log-normal distribution",
       "Parameterised as a log-normal distribution",
-      "Assuming a normal error model"
+      "Assuming a normal error model",
       "Prior used for the individual-level correlation matrix. There is 
       one parameter which at 1 represents a uniform prior. Smaller values indicate strong correlations, and larger values weaker correlations"
     ),
@@ -63,7 +63,7 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Normal",
       "Normal",
       "Zero truncated normal",
-      "Zero truncated normal"
+      "Zero truncated normal",
       "Lewandowski-Kurowicka-Joe (LKJ) distribution"
     ),
     intercept_mean = c(5, 10, 0, 1.61, 0, 1.61, 2.3, 1.62, 0.42, 2, 1),
@@ -103,7 +103,7 @@ epict_convert_to_list <- function(
   piecewise_formula = epict::piecewise_formula(~1, obs),
   adjustment_formula = epict::adjustment_formula(~1, obs),
   priors = epict::epict_priors(),
-  model_opts = epict::epict_model_opts()
+  model_opts = epict::epict_model_opts(),
   inference_opts = epict::epict_inference_opts()
 ) {
   data <- enw_obs_as_list(obs)

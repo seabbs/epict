@@ -24,8 +24,8 @@ epict <- function(obs,
                   piecewise_formula = epict::piecewise_formula(~1, obs),
                   adjustment_formula = epict::adjustment_formula(~1, obs),
                   priors = epict::epict_priors(),
-                  model_opts = epict::epict_model_opts()
-                  inference_opts = epict::epict_inference_opts()
+                  model_opts = epict::epict_model_opts(),
+                  inference_opts = epict::epict_inference_opts(),
                   convert_to_list = epict_convert_to_list,
                   inits = epict_inits,
                   ...) {

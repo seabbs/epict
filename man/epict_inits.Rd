@@ -4,10 +4,10 @@
 \alias{epict_inits}
 \title{Set up initial conditions for model}
 \usage{
-epict_inits(data)
+epict_inits(data, scale = 0.1)
 }
 \arguments{
-\item{data}{A list of data as produced by \code{\link[=epict_to_stan]{epict_to_stan()}}.}
+\item{data}{A list of data as produced by \code{\link[=epict_as_list]{epict_as_list()}}.}
 }
 \value{
 A function that when called returns a list of initial conditions
@@ -18,8 +18,11 @@ Set up initial conditions for model
 }
 \seealso{
 Functions used for modelling
+\code{\link{epict_convert_to_list}()},
 \code{\link{epict_model}()},
-\code{\link{epict_priors}()},
-\code{\link{epict_to_stan}()}
+\code{\link{epict_priors}()}
+}
+\author{
+Sam Abbott
 }
 \concept{model}

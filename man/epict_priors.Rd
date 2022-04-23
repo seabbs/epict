@@ -6,6 +6,10 @@
 \usage{
 epict_priors(individual_variation = c(0, 0.05))
 }
+\arguments{
+\item{individual_variation}{A vector of length two specifying the
+default mean and standard deviation of individual-level variation.}
+}
 \value{
 A data frame summarising the model priors.
 }
@@ -17,9 +21,9 @@ epict_priors()
 }
 \seealso{
 Functions used for modelling
+\code{\link{epict_convert_to_list}()},
 \code{\link{epict_inits}()},
-\code{\link{epict_model}()},
-\code{\link{epict_to_stan}()}
+\code{\link{epict_model}()}
 }
 \author{
 Sam Abbott
