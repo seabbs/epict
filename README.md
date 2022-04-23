@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Flexible Cycle threshold modelling
+# Flexible cycle threshold modelling
 
 [![R-CMD-check](https://github.com/seabbs/epict/workflows/R-CMD-check/badge.svg)](https://github.com/seabbs/epict/actions)
 [![Lifecycle:
