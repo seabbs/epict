@@ -34,6 +34,9 @@
     <loc>samabbott.co.uk/epict/news/index.html</loc>
   </url>
   <url>
+    <loc>samabbott.co.uk/epict/reference/adjustment_formula.html</loc>
+  </url>
+  <url>
     <loc>samabbott.co.uk/epict/reference/epict-package.html</loc>
   </url>
   <url>
@@ -49,6 +52,9 @@
     <loc>samabbott.co.uk/epict/reference/epict_clean_factors.html</loc>
   </url>
   <url>
+    <loc>samabbott.co.uk/epict/reference/epict_convert_to_list.html</loc>
+  </url>
+  <url>
     <loc>samabbott.co.uk/epict/reference/epict_drop_na_ct.html</loc>
   </url>
   <url>
@@ -58,10 +64,13 @@
     <loc>samabbott.co.uk/epict/reference/epict_flag_spurious_ids.html</loc>
   </url>
   <url>
-    <loc>samabbott.co.uk/epict/reference/epict_formula_as_data_list.html</loc>
+    <loc>samabbott.co.uk/epict/reference/epict_formula_as_list.html</loc>
   </url>
   <url>
-    <loc>samabbott.co.uk/epict/reference/epict_individual_priors_as_data_list.html</loc>
+    <loc>samabbott.co.uk/epict/reference/epict_individual_priors_as_list.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/epict_inference_opts.html</loc>
   </url>
   <url>
     <loc>samabbott.co.uk/epict/reference/epict_inits.html</loc>
@@ -76,10 +85,16 @@
     <loc>samabbott.co.uk/epict/reference/epict_model.html</loc>
   </url>
   <url>
-    <loc>samabbott.co.uk/epict/reference/epict_opts_as_data_list.html</loc>
+    <loc>samabbott.co.uk/epict/reference/epict_model_opts.html</loc>
   </url>
   <url>
-    <loc>samabbott.co.uk/epict/reference/epict_population_priors_as_data_list.html</loc>
+    <loc>samabbott.co.uk/epict/reference/epict_obs_as_list.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/epict_onset_obs_as_list.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/epict_population_priors_as_list.html</loc>
   </url>
   <url>
     <loc>samabbott.co.uk/epict/reference/epict_posterior_as_prior.html</loc>
@@ -88,12 +103,15 @@
     <loc>samabbott.co.uk/epict/reference/epict_priors.html</loc>
   </url>
   <url>
-    <loc>samabbott.co.uk/epict/reference/epict_to_stan.html</loc>
-  </url>
-  <url>
     <loc>samabbott.co.uk/epict/reference/index.html</loc>
   </url>
   <url>
+    <loc>samabbott.co.uk/epict/reference/piecewise_formula.html</loc>
+  </url>
+  <url>
     <loc>samabbott.co.uk/epict/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>samabbott.co.uk/epict/reference/select_piecewise_parameters.html</loc>
   </url>
 </urlset>
