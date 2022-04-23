@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Cycle threshold modelling
+# Flexible Cycle threshold modelling
 
 [![R-CMD-check](https://github.com/seabbs/epict/workflows/R-CMD-check/badge.svg)](https://github.com/seabbs/epict/actions)
 [![Lifecycle:
@@ -14,7 +14,8 @@ license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/
 [![GitHub
 contributors](https://img.shields.io/github/contributors/seabbs/epict)](https://github.com/seabbs/epict/graphs/contributors)
 
-This package contains tools to enable flexible and efficient …
+Flexible piecewise modelling of cycle thresholds with adjustment for
+varying intercepts and linear scales.
 
 ## Installation
 

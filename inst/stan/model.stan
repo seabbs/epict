@@ -1,6 +1,7 @@
 // Piecewise linear modelling of Cycle Thresholds
 // 
-// Flexible piecewise modelling of Cycle Thresholds.
+// Flexible piecewise modelling of Cycle Thresholds with adjustment for 
+// varying intercepts and linear scales.
 //
 // @licence MIT
 // @author Sam Abbott

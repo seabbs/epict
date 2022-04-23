@@ -1,5 +1,5 @@
 Package: epict
-Title: Cycle Threshold Modelling
+Title: Flexible Cycle Threshold Modelling
 Version: 0.1.0
 Authors@R: c(
     person("Sam", "Abbott", , "sam.abbott@lshtm.ac.uk", role = c("aut", "cre"),
@@ -7,7 +7,8 @@ Authors@R: c(
     person("Tim", "Russell", , "timothy.russell@lshtm.ac.uk", role = "aut"),
     person("Joel", "Hellewell", , "joel.hellewell@lshtm.ac.uk", role = "aut")
   )
-Description: Cycle threshold modelling
+Description: Flexible piecewise modelling of cycle thresholds with 
+    adjustment for varying intercepts and linear scales.
 License: MIT + file LICENSE
 URL: https://samabbott.co.uk/epict/,
     https://github.com/seabbs/epict/
