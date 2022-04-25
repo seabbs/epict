@@ -12,20 +12,48 @@ epict_filter_ids(
 )
 }
 \arguments{
-\item{obs}{DESCRIPTION.}
+\item{obs}{A data.frame with the following variables:
+\itemize{
+\item \code{id}: An integer vector uniquely identifying each infection.
+\item \code{t}: Time of test relative to a baseline date.
+\item \code{censored}: Logical, indicating if the Ct has been censored.
+}}
 
-\item{min_uncensored_tests}{DESCRIPTION.}
+\item{min_uncensored_tests}{Numeric defaults to 2. The minimum number of
+uncensored tests an ID must have in order to be included in the processed
+dataset.}
 
-\item{min_days_with_uncensored}{DESCRIPTION.}
+\item{min_days_with_uncensored}{Numeric defaults to 2. The minimum number of
+days tests per ID must span in order to be included in the processed dataset.}
 
 \item{invert}{Logical, defaults to \code{FALSE}. Should the filtering
-requirements be inverted.}
+requirements be inverted. This switches from exluding to including and
+can be used for debugging and data exploration.}
 }
 \value{
-RETURN_DESCRIPTION
+A \code{data.table} with IDs failing/meeting the specified criteria
+removed
 }
 \description{
-FUNCTION_DESCRIPTION
+Filter infection IDs based on characteristics
+}
+\examples{
+obs <- data.frame(
+ censored = c(TRUE, rep(FALSE, 3), TRUE, rep(FALSE, 4)),
+ id = c(1, 1, 1, 2, 3, 3, 4, 4, 4), t = c(0, 0, 1, 1, 1, 2, 1, 1, 1)
+)
+
+# Use defaults
+epict_filter_ids(obs)
+
+# Invert with defaults
+epict_filter_ids(obs, invert = TRUE)
+
+# Remove IDs with less than 3 tests
+epict_filter_ids(obs, min_uncensored_tests = 3, min_days_with_uncensored = 1)
+
+#' # Remove IDs with less than 3 tests - this will be all available data
+epict_filter_ids(obs, min_days_with_uncensored = 3)
 }
 \author{
 Sam Abbott

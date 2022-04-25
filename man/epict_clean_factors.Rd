@@ -4,16 +4,31 @@
 \alias{epict_clean_factors}
 \title{Clean up factor levels}
 \usage{
-epict_clean_factors(vars = c())
+epict_clean_factors(obs, vars = c())
 }
 \arguments{
-\item{vars}{DESCRIPTION.}
+\item{vars}{A character vector of variables. Defaults to empty.}
 }
 \value{
-RETURN_DESCRIPTION
+A \code{data.table} with empty factors dropped and character vectors
+transformed to factors as specified.
 }
 \description{
-FUNCTION_DESCRIPTION
+This utility function drops empty factor levels from target factors as well
+as converting them to factors from character variables.
+}
+\examples{
+obs <- data.frame(
+ m = c("fa", "aefwe", "efe"),
+ c = as.factor(c("fa", "asas", "asa"))
+)
+summary(obs)
+
+# Default without specifying variables
+summary(epict_clean_factors(obs))
+
+# Specify variables
+summary(epict_clean_factors(obs, vars = c("m", "c")))
 }
 \author{
 Sam Abbott

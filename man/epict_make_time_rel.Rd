@@ -2,20 +2,40 @@
 % Please edit documentation in R/preprocess-obs.R
 \name{epict_make_time_rel}
 \alias{epict_make_time_rel}
-\title{Make time relative to first test in the data}
+\title{Make time relative to first date of the test.}
 \usage{
-epict_make_time_rel(obs, baseline_date = min(obs$onset_date, na.rm = TRUE))
+epict_make_time_rel(obs, baseline_date = min(obs$test_date, na.rm = TRUE))
 }
 \arguments{
-\item{obs}{DESCRIPTION.}
+\item{obs}{A \code{data.frame} with the following variables:
+\itemize{
+\item \code{test_date}: Date of the test yielding a Ct value.
+\item \code{onset_date}: Date of onset for each infection (optional).
+}}
 
-\item{baseline_date}{DESCRIPTION.}
+\item{baseline_date}{A date to use as the baseline date for all other
+times in the dataset. By default this is the minimum test date in the
+dataset.}
 }
 \value{
-RETURN_DESCRIPTION
+A \code{data.table} with a \code{t} variable containing the numeric time in
+days since the \code{baseline_date}.
 }
 \description{
-FUNCTION_DESCRIPTION
+Make time relative to first date of the test.
+}
+\examples{
+obs <- data.frame(test_date = as.Date(c("2022-04-22", "2022-04-19")))
+
+# Using default baseline date
+epict_make_time_rel(obs)
+
+# Using user specified baseline date
+epict_make_time_rel(obs, baseline_date = as.Date("2022-04-01"))
+
+# When onsets are present
+obs$onset_date <- obs$test_date
+epict_make_time_rel(obs)
 }
 \author{
 Sam Abbott

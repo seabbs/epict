@@ -7,13 +7,17 @@
 epict_drop_na_ct(obs)
 }
 \arguments{
-\item{obs}{DESCRIPTION.}
+\item{obs}{A \code{data.frame} with a numeric \code{ct_value} variable.}
 }
 \value{
-RETURN_DESCRIPTION
+The input \code{data.table} with \code{NA} values dropped.
 }
 \description{
-FUNCTION_DESCRIPTION
+Drop Ct values with no data
+}
+\examples{
+obs <- data.frame(ct_value = c(1, NA, 2))
+epict_drop_na_ct(obs)
 }
 \author{
 Sam Abbott

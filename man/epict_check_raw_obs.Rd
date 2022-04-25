@@ -9,16 +9,16 @@ epict_check_raw_obs(obs, dates_available = TRUE, check_onset = FALSE)
 \arguments{
 \item{obs}{A data.frame with the following variables:
 \itemize{
-\item id: An integer vector uniquely identifying each infection.
-\item test_id: An integer vector uniquely identiying each test
-\item ct_value: Numeric cycle threshold value.
-\item test_date: Date of the test yielding a Ct value. (optional)
-\item t: Time of test relative to a baseline date. Optional but required
+\item \code{id}: An integer vector uniquely identifying each infection.
+\item \code{test_id}: An integer vector uniquely identiying each test
+\item \code{ct_value}: Numeric cycle threshold value.
+\item \code{test_date}: Date of the test yielding a Ct value. (optional)
+\item \code{t}: Time of test relative to a baseline date. Optional but required
 if test_date is not present.
-\item onset_date Date of onset for each infection (optional).
-NA if unavailable/asymptomatic
-\item onset_t Time on onset relative to a baseline date (optional).
-\item censored: Logical, indicating if the Ct has been censored.
+\item \code{onset_date}:e Date of onset for each infection (optional).
+\code{NA} if unavailable/asymptomatic
+\item \code{onset_t}: Time on onset relative to a baseline date (optional).
+\item \code{censored}: Logical, indicating if the Ct has been censored.
 }}
 
 \item{dates_available}{Logical, defaults to \code{TRUE}. Are dates available

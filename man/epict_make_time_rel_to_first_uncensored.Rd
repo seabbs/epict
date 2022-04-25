@@ -7,13 +7,29 @@
 epict_make_time_rel_to_first_uncensored(obs)
 }
 \arguments{
-\item{obs}{DESCRIPTION.}
+\item{obs}{A data.frame with the following variables:
+\itemize{
+\item \code{id}: An integer vector uniquely identifying each infection.
+\item \code{t}: Time of test relative to a baseline date.
+\item \code{onset_t}: Time on onset relative to a baseline date (optional).
+\item \code{censored}: Logical, indicating if the Ct has been censored.
+}}
 }
 \value{
-RETURN_DESCRIPTION
+A \code{data.table} with times relative to the first uncensored test per
+ID.
 }
 \description{
-FUNCTION_DESCRIPTION
+Make time relative to first uncensored test per ID
+}
+\examples{
+obs <- data.frame(
+ id = c(rep(1, 3), rep(2, 4)), t = c(2, 3, 4, 1, 1, 2, 8), 
+ onset_t = c(rep(2, 3), rep(4, 4)),
+ censored = c(TRUE, FALSE, FALSE, TRUE, rep(FALSE, 3))
+)
+
+epict_make_time_rel_to_first_uncensored(obs)
 }
 \author{
 Sam Abbott
