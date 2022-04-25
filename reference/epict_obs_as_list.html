@@ -93,16 +93,16 @@ cycle threshold value present for a censored test.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>obs</dt>
-<dd><p>A data.frame with the following variables:</p><ul><li><p>id: An integer vector uniquely identifying eahc infection.</p></li>
-<li><p>test_id: An integer vector uniquely identiying each test</p></li>
-<li><p>ct_value: Numeric cycle threshold value.</p></li>
-<li><p>t: Relative (to a baseline) time of the test yielding a Ct value.</p></li>
-<li><p>t_rel_uncensored: Time of test relative to the first uncensored Ct value
+<dd><p>A data.frame with the following variables:</p><ul><li><p><code>id</code>: An integer vector uniquely identifying eahc infection.</p></li>
+<li><p><code>test_id</code>: An integer vector uniquely identiying each test</p></li>
+<li><p><code>ct_value</code>: Numeric cycle threshold value.</p></li>
+<li><p><code>t</code>: Relative (to a baseline) time of the test yielding a Ct value.</p></li>
+<li><p><code>t_rel_uncensored</code>: Time of test relative to the first uncensored Ct value
 for that id.</p></li>
-<li><p>onset_t: Relative (to a baseline) time of onset for each infection</p></li>
-<li><p>onset_t_rel_uncensored: Time of onset relative to the first uncensored Ct
-value for that id. (optional). NA if unavailable/asymptomatic.</p></li>
-<li><p>censored: Logical, indicating if the Ct has been censored.</p></li>
+<li><p><code>onset_t</code>: Relative (to a baseline) time of onset for each infection</p></li>
+<li><p><code>onset_t_rel_uncensored</code>: Time of onset relative to the first uncensored
+Ct value for that id. (optional). NA if unavailable/asymptomatic.</p></li>
+<li><p><code>censored</code>: Logical, indicating if the Ct has been censored.</p></li>
 </ul></dd>
 </dl></div>
     <div class="section level2">
@@ -134,7 +134,7 @@ value for that id. (optional). NA if unavailable/asymptomatic.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
   <p class="preferably">Using <a href="https://preferably.amirmasoudabdol.name/?source=footer" class="external-link">preferably</a> template.</p>
 </div>
 
