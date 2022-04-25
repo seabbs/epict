@@ -37,8 +37,11 @@ adjustment formula (shift and scale) as described by \code{\link[=adjustment_for
 \item{priors}{A data.table of population-level priors as produced
 by \code{\link[=epict_priors]{epict_priors()}}.}
 
-\item{model_opts}{A list of Cycle threshold model options as returned
-by \code{\link[=epict_ct_model_opts]{epict_ct_model_opts()}}.}
+\item{model_opts}{A list of model options. See \code{\link[=epict_model_opts]{epict_model_opts()}}
+for details}
+
+\item{inference_opts}{A list of options to use for inference. See
+\code{\link[=epict_inference_opts]{epict_inference_opts()}} for details.}
 }
 \value{
 A list as required by stan.

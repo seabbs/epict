@@ -86,8 +86,13 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
 
 #' Format observations and model settings for use with stan
 #'
-#' @return A list as required by stan.
+#' @param model_opts A list of model options. See [epict_model_opts()]
+#' for details
 #' 
+#' @param inference_opts A list of options to use for inference. See
+#' [epict_inference_opts()] for details.
+#' 
+#' @return A list as required by stan.
 #' @inheritParams epict_obs_as_list
 #' @inheritParams epict_onset_obs_as_list
 #' @inheritParams epict_model_opts
@@ -95,6 +100,7 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
 #' @inheritParams epict_formula_as_list
 #' @inheritParams epict_population_priors_as_list
 #' @inheritParams epict_individual_priors_as_list
+#' @inheritParams epict_posterior_as_prior
 #' @family model
 #' @author Sam Abbott
 #' @export
@@ -139,6 +145,10 @@ epict_convert_to_list <- function(
 #'
 #' @param data A list of data as produced by [epict_as_list()].
 #'
+#' @param scale Numeric defaults to 0.1. The numeric scaling to apply to the
+#' standard deviation when sampling. Helpful for reducing numeric instability
+#' during warmup.
+#' 
 #' @return A function that when called returns a list of initial conditions
 #' for the package stan models.
 #'

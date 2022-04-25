@@ -4,6 +4,9 @@
 #' to model cycle thresholds, and symptom onsets from observed preprocessed
 #' data, a piecewise linear model, and a linear adjustment model.
 #'
+#' @param model A compiled `cmdstanr` model object. By default this uses
+#' [epict_model()].
+#' 
 #' @param convert_to_list Convert observations and model settings into
 #' a list for use in stan. Defaults to using [epict_convert_to_list()].
 #'

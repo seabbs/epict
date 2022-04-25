@@ -7,6 +7,8 @@
 epict_clean_factors(obs, vars = c())
 }
 \arguments{
+\item{obs}{A \code{data.frame} with at least one character or factor variable.}
+
 \item{vars}{A character vector of variables. Defaults to empty.}
 }
 \value{

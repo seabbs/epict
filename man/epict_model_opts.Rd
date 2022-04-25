@@ -12,6 +12,9 @@ epict_model_opts(
 )
 }
 \arguments{
+\item{onsets}{Logical, defaults to \code{TRUE}. Should symptom onsets
+observations be included in the model if available.}
+
 \item{switch}{Logical, default to \code{FALSE}. Should a secondary breakpoint be
 included in the piecewise linear Cycle threshold model.}
 

@@ -4,7 +4,7 @@
 \alias{epict_check_obs}
 \title{Check proccessed observations meet the package specification}
 \usage{
-epict_check_obs(obs, check_onsets = FALSE)
+epict_check_obs(obs, check_onset = FALSE)
 }
 \arguments{
 \item{obs}{A data.frame with the following variables:
@@ -20,6 +20,9 @@ for that id.
 Ct value for that id. (optional). NA if unavailable/asymptomatic.
 \item \code{censored}: Logical, indicating if the Ct has been censored.
 }}
+
+\item{check_onset}{Logical, defaults to \code{FALSE}. Should observations be
+checked for the presence of symptom onset data.}
 }
 \value{
 A \code{data.table} of observations ready for use in \code{\link[=epict]{epict()}} and other

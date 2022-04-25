@@ -32,6 +32,9 @@ Ct value for that id. (optional). NA if unavailable/asymptomatic.
 \item \code{censored}: Logical, indicating if the Ct has been censored.
 }}
 
+\item{model}{A compiled \code{cmdstanr} model object. By default this uses
+\code{\link[=epict_model]{epict_model()}}.}
+
 \item{piecewise_formula}{A list describing the piecewise linear cycle threshold
 formula as described by \code{\link[=piecewise_formula]{piecewise_formula()}}.}
 
@@ -41,8 +44,11 @@ adjustment formula (shift and scale) as described by \code{\link[=adjustment_for
 \item{priors}{A data.table of population-level priors as produced
 by \code{\link[=epict_priors]{epict_priors()}}.}
 
-\item{model_opts}{A list of Cycle threshold model options as returned
-by \code{\link[=epict_ct_model_opts]{epict_ct_model_opts()}}.}
+\item{model_opts}{A list of model options. See \code{\link[=epict_model_opts]{epict_model_opts()}}
+for details}
+
+\item{inference_opts}{A list of options to use for inference. See
+\code{\link[=epict_inference_opts]{epict_inference_opts()}} for details.}
 
 \item{convert_to_list}{Convert observations and model settings into
 a list for use in stan. Defaults to using \code{\link[=epict_convert_to_list]{epict_convert_to_list()}}.}

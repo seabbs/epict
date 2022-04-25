@@ -287,6 +287,8 @@ epict_filter_ids <- function(obs, min_uncensored_tests = 2,
 #' This utility function drops empty factor levels from target factors as well
 #' as converting them to factors from character variables.
 #'
+#' @param obs A `data.frame` with at least one character or factor variable.
+#'
 #' @param vars A character vector of variables. Defaults to empty.
 #'
 #' @return A `data.table` with empty factors dropped and character vectors
@@ -344,10 +346,10 @@ epict_clean_factors <- function(obs, vars = c()) {
 #' @family preprocess
 #' @author Sam Abbott
 #' @export
-epict_check_obs <- function(obs, check_onsets = FALSE) {
+epict_check_obs <- function(obs, check_onset = FALSE) {
   cols <- c("id", "test_id", "t", "t_rel_uncensored", "ct_value",
             "censored")
-  if (check_onsets){
+  if (check_onset){
     cols <- c(cols, "onset_t", "onset_t_rel_uncensored")
   }
   return(obs[])

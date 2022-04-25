@@ -8,6 +8,10 @@ epict_inits(data, scale = 0.1)
 }
 \arguments{
 \item{data}{A list of data as produced by \code{\link[=epict_as_list]{epict_as_list()}}.}
+
+\item{scale}{Numeric defaults to 0.1. The numeric scaling to apply to the
+standard deviation when sampling. Helpful for reducing numeric instability
+during warmup.}
 }
 \value{
 A function that when called returns a list of initial conditions

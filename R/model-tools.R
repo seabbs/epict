@@ -57,7 +57,7 @@ epict_onset_obs_as_list <- function(obs, onsets = TRUE) {
 #' @export
 epict_obs_as_list <- function(obs) {
 
-  obs <- data.tabler::copy(obs)[order(id)]
+  obs <- data.table::copy(obs)[order(id)]
   obs[, obs_id := 1:.N]
   tests_per_id <- obs[, .(n = .N), by = "id"]$n
 
@@ -197,6 +197,7 @@ adjustment_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1)) {
 #' individual level variation).
 #' 
 #' @return A list as required by stan.
+#' @inheritParams epict_onset_obs_as_list
 #' @family modeltools
 #' @author Sam Abbott
 #' @export
