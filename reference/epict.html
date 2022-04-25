@@ -115,6 +115,9 @@ for that id.</p></li>
 Ct value for that id. (optional). NA if unavailable/asymptomatic.</p></li>
 <li><p><code>censored</code>: Logical, indicating if the Ct has been censored.</p></li>
 </ul></dd>
+<dt>model</dt>
+<dd><p>A compiled <code>cmdstanr</code> model object. By default this uses
+<code><a href="epict_model.html">epict_model()</a></code>.</p></dd>
 <dt>piecewise_formula</dt>
 <dd><p>A list describing the piecewise linear cycle threshold
 formula as described by <code><a href="piecewise_formula.html">piecewise_formula()</a></code>.</p></dd>
@@ -125,8 +128,11 @@ adjustment formula (shift and scale) as described by <code><a href="adjustment_f
 <dd><p>A data.table of population-level priors as produced
 by <code><a href="epict_priors.html">epict_priors()</a></code>.</p></dd>
 <dt>model_opts</dt>
-<dd><p>A list of Cycle threshold model options as returned
-by <code>epict_ct_model_opts()</code>.</p></dd>
+<dd><p>A list of model options. See <code><a href="epict_model_opts.html">epict_model_opts()</a></code>
+for details</p></dd>
+<dt>inference_opts</dt>
+<dd><p>A list of options to use for inference. See
+<code><a href="epict_inference_opts.html">epict_inference_opts()</a></code> for details.</p></dd>
 <dt>convert_to_list</dt>
 <dd><p>Convert observations and model settings into
 a list for use in stan. Defaults to using <code><a href="epict_convert_to_list.html">epict_convert_to_list()</a></code>.</p></dd>

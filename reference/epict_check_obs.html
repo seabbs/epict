@@ -87,7 +87,7 @@ the observations.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">epict_check_obs</span><span class="op">(</span><span class="va">obs</span>, check_onsets <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">epict_check_obs</span><span class="op">(</span><span class="va">obs</span>, check_onset <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -104,6 +104,9 @@ for that id.</p></li>
 Ct value for that id. (optional). NA if unavailable/asymptomatic.</p></li>
 <li><p><code>censored</code>: Logical, indicating if the Ct has been censored.</p></li>
 </ul></dd>
+<dt>check_onset</dt>
+<dd><p>Logical, defaults to <code>FALSE</code>. Should observations be
+checked for the presence of symptom onset data.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
