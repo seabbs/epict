@@ -2,8 +2,7 @@ list( # nolint
   rd_family_title = list( # nolint
     preprocess = "Preprocessing functions",
     model = "Functions used for modelling",
-    modeldesign = "Functions used to formulate models",
-    modeltools = "Functions used to help convert models into the format required for stan", # nolint
+    modeltools = "Functions used to design and setup models", # nolint
     postprocess = "Functions used for postprocessing of model fits", # nolint
     plot = "Plotting functions",
     generatedata = "Functions to generate simulated data",

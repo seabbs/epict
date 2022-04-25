@@ -30,14 +30,17 @@ censoring limit is set internally in this function based on the minimum
 cycle threshold value present for a censored test.
 }
 \seealso{
-Functions used to help convert models into the format required for stan
+Functions used to design and setup models
+\code{\link{adjustment_formula}()},
 \code{\link{epict_formula_as_list}()},
 \code{\link{epict_individual_priors_as_list}()},
 \code{\link{epict_inference_opts}()},
 \code{\link{epict_model_opts}()},
 \code{\link{epict_onset_obs_as_list}()},
 \code{\link{epict_population_priors_as_list}()},
-\code{\link{epict_posterior_as_prior}()}
+\code{\link{epict_posterior_as_prior}()},
+\code{\link{piecewise_formula}()},
+\code{\link{select_piecewise_parameters}()}
 }
 \author{
 Sam Abbott

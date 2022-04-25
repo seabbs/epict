@@ -19,3 +19,42 @@ development:
 authors:
   Sam Abbott:
     href: "https://www.samabbott.co.uk/"
+
+
+reference:
+  - title: Core functions
+    desc: Core Functions used for fitting models with preprocessed observations.
+    contents:
+      - has_concept("epict")
+  - title: Preprocess
+    desc: Functions for preprocessing observations.
+    contents:
+      - has_concept("preprocess")
+  - title: Model tools
+    desc: Functions that assist with designing and setting up models.
+    contents:
+      - has_concept("modeltools")
+  - title: Model
+    desc: Functions for fitting models.
+    contents:
+      - has_concept("model")
+  - title: Postprocess
+    desc: Functions for postprocessing model output.
+    contents:
+      - has_concept("postprocess")
+  - title: Plot
+    desc: Functions for plotting observations and model output
+    contents:
+      - has_concept("plot")
+  - title: Generate data
+    desc: Functions for generating simulated data.
+    contents:
+      - has_concept("generatedata")
+  - title: Datasets
+    desc: Package datasets used in examples and by users to explore the package functionality.
+    contents:
+      - has_concept("data")
+  - title: Utilities
+    desc: Utility tools and functionality
+    contents:
+      - has_concept("utils")

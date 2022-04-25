@@ -26,6 +26,7 @@
 #'
 #' @return Input observations are returned.
 #' @importFrom data.table as.data.table
+#' @family preprocess
 #' @author Sam Abbott
 #' @export
 epict_check_raw_obs <- function(obs, dates_available = TRUE,
@@ -57,6 +58,7 @@ epict_check_raw_obs <- function(obs, dates_available = TRUE,
 #' @return A `data.table` with a `t` variable containing the numeric time in
 #' days since the `baseline_date`.
 #' @importFrom data.table as.data.table
+#' @family preprocess
 #' @author Sam Abbott
 #' @export
 #' @examples
@@ -85,6 +87,7 @@ epict_make_time_rel <- function(obs, baseline_date = min(obs$test_date,
 #' @param obs A `data.frame` with a numeric `ct_value` variable.
 #'
 #' @return The input `data.table` with `NA` values dropped.
+#' @family preprocess
 #' @author Sam Abbott
 #' @export
 #' @examples
@@ -105,6 +108,7 @@ epict_drop_na_ct <- function(obs) {
 #' @return A `data.table` with times relative to the first uncensored test per
 #' ID.
 #' @importFrom data.table as.data.table
+#' @family preprocess
 #' @author Sam Abbott
 #' @export
 #' @examples
@@ -154,6 +158,7 @@ epict_make_time_rel_to_first_uncensored <- function(obs) {
 #'
 #' @return A `data.table` of observations
 #' @importFrom data.table as.data.table
+#' @family preprocess
 #' @author Sam Abbott
 #' @export
 #' @examples
@@ -232,7 +237,8 @@ epict_flag_spurious_obs <- function(obs, max_t_rel_uncensored = 60,
 #' can be used for debugging and data exploration.
 #' 
 #' @return A `data.table` with IDs failing/meeting the specified criteria
-#' removed
+#' removed.
+#' @family preprocess
 #' @author Sam Abbott
 #' @importFrom data.table as.data.table uniqueN
 #' @export
@@ -285,6 +291,7 @@ epict_filter_ids <- function(obs, min_uncensored_tests = 2,
 #'
 #' @return A `data.table` with empty factors dropped and character vectors
 #' transformed to factors as specified.
+#' @family preprocess
 #' @author Sam Abbott
 #' @export
 #' @importFrom data.table as.data.table
@@ -334,6 +341,7 @@ epict_clean_factors <- function(obs, vars = c()) {
 #' @return A `data.table` of observations ready for use in [epict()] and other 
 #' package functions.
 #' @inheritParams epict_check_raw_obs
+#' @family preprocess
 #' @author Sam Abbott
 #' @export
 epict_check_obs <- function(obs, check_onsets = FALSE) {

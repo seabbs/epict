@@ -20,7 +20,7 @@ as converting them to factors from character variables.
 \examples{
 obs <- data.frame(
  m = c("fa", "aefwe", "efe"),
- c = as.factor(c("fa", "asas", "asa"))
+ c = factor(c("fa", "asas", "asa"), levels = c("fa"))
 )
 summary(obs)
 
@@ -30,6 +30,17 @@ summary(epict_clean_factors(obs))
 # Specify variables
 summary(epict_clean_factors(obs, vars = c("m", "c")))
 }
+\seealso{
+Preprocessing functions
+\code{\link{epict_check_obs}()},
+\code{\link{epict_check_raw_obs}()},
+\code{\link{epict_drop_na_ct}()},
+\code{\link{epict_filter_ids}()},
+\code{\link{epict_flag_spurious_obs}()},
+\code{\link{epict_make_time_rel_to_first_uncensored}()},
+\code{\link{epict_make_time_rel}()}
+}
 \author{
 Sam Abbott
 }
+\concept{preprocess}

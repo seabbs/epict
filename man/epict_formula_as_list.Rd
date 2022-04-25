@@ -27,14 +27,17 @@ A list as required by stan.
 Format formula data for use with stan
 }
 \seealso{
-Functions used to help convert models into the format required for stan
+Functions used to design and setup models
+\code{\link{adjustment_formula}()},
 \code{\link{epict_individual_priors_as_list}()},
 \code{\link{epict_inference_opts}()},
 \code{\link{epict_model_opts}()},
 \code{\link{epict_obs_as_list}()},
 \code{\link{epict_onset_obs_as_list}()},
 \code{\link{epict_population_priors_as_list}()},
-\code{\link{epict_posterior_as_prior}()}
+\code{\link{epict_posterior_as_prior}()},
+\code{\link{piecewise_formula}()},
+\code{\link{select_piecewise_parameters}()}
 }
 \author{
 Sam Abbott

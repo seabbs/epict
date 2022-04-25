@@ -32,7 +32,7 @@ can be used for debugging and data exploration.}
 }
 \value{
 A \code{data.table} with IDs failing/meeting the specified criteria
-removed
+removed.
 }
 \description{
 Filter infection IDs based on characteristics
@@ -55,6 +55,17 @@ epict_filter_ids(obs, min_uncensored_tests = 3, min_days_with_uncensored = 1)
 #' # Remove IDs with less than 3 tests - this will be all available data
 epict_filter_ids(obs, min_days_with_uncensored = 3)
 }
+\seealso{
+Preprocessing functions
+\code{\link{epict_check_obs}()},
+\code{\link{epict_check_raw_obs}()},
+\code{\link{epict_clean_factors}()},
+\code{\link{epict_drop_na_ct}()},
+\code{\link{epict_flag_spurious_obs}()},
+\code{\link{epict_make_time_rel_to_first_uncensored}()},
+\code{\link{epict_make_time_rel}()}
+}
 \author{
 Sam Abbott
 }
+\concept{preprocess}

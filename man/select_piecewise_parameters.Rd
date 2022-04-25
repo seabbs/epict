@@ -24,6 +24,20 @@ Select the parameters to adjust in the piecewise model
 \examples{
 select_piecewise_parameters()
 }
+\seealso{
+Functions used to design and setup models
+\code{\link{adjustment_formula}()},
+\code{\link{epict_formula_as_list}()},
+\code{\link{epict_individual_priors_as_list}()},
+\code{\link{epict_inference_opts}()},
+\code{\link{epict_model_opts}()},
+\code{\link{epict_obs_as_list}()},
+\code{\link{epict_onset_obs_as_list}()},
+\code{\link{epict_population_priors_as_list}()},
+\code{\link{epict_posterior_as_prior}()},
+\code{\link{piecewise_formula}()}
+}
 \author{
 Sam Abbott
 }
+\concept{modeltools}

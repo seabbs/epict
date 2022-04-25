@@ -92,6 +92,7 @@ epict_obs_as_list <- function(obs) {
 #' @return A named list of parameters to adjust in the piecewise 
 #' model.
 #' @importFrom purrr map
+#' @family modeltools
 #' @author Sam Abbott
 #' @export
 #' @examples
@@ -121,6 +122,7 @@ select_piecewise_parameters <- function(params = "all") {
 #' @inheritParams epict_check_obs
 #' @inheritParams select_piecewise_parameters
 #' @importFrom data.table CJ
+#' @family modeltools
 #' @export
 #' @author Sam Abbott
 piecewise_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1),
@@ -142,7 +144,7 @@ piecewise_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1),
 
   out <- list(
     design = design, subjects = subjects, params = params,
-    beta = beta
+    beta = beta[]
   )
   return(out)
 }
@@ -154,7 +156,13 @@ piecewise_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1),
 #' @inheritParams piecewise_formula
 #' @export
 #' @importFrom data.table CJ
+#' @family modeltools
 #' @author Sam Abbott
+#' @examples 
+#' obs <- data.frame(
+#'  age = c(1, 2, 3), cats = c(1, 2, 1), status = c("h", "l", "h")
+#' )
+#' adjustment_formula(~ cats + age + status, obs)
 adjustment_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1)) {
   design <- model.matrix(formula, data = obs)
   
@@ -169,7 +177,7 @@ adjustment_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1)) {
   )]
 
   out <- list(
-    design = design, beta = beta
+    design = design, beta = beta[]
   )
   return(out)
 }
@@ -192,6 +200,12 @@ adjustment_formula <- function(formula = ~1, obs, beta_default = c(0, 0.1)) {
 #' @family modeltools
 #' @author Sam Abbott
 #' @export
+#' @examples
+#' # Default options
+#' epict_model_opts()
+#' 
+#' # No variation and use the piecewise switch
+#' epict_model_opts(switch = TRUE, variation = "none")
 epict_model_opts <- function(onsets = TRUE, switch = FALSE,
                              latent_infections = TRUE,
                              variation = "correlated") {
@@ -208,7 +222,7 @@ epict_model_opts <- function(onsets = TRUE, switch = FALSE,
     ind_corr = as.numeric(variation == "correlated"),
     K = ifelse(switch, 5, 3)
   )
-  return(opts)
+  return(data)
 }
 
 #' Format formula data for use with stan
@@ -352,6 +366,8 @@ epict_individual_priors_as_list <- function(priors) {
 #' @family modeltools
 #' @author Sam Abbott
 #' @export
+#' @examples 
+#' epict_inference_opts()
 epict_inference_opts <- function(pp = FALSE, likelihood = TRUE,
                                  debug = FALSE, output_loglik = FALSE) {
 
