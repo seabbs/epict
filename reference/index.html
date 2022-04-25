@@ -74,9 +74,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="core-functions">Core functions<a class="anchor" aria-label="anchor" href="#core-functions"></a></h2>
       
-      
+      <p class="section-desc"></p><p>Core Functions used for fitting models with preprocessed observations.</p>
 
       
     </div><div id="" class="section level2">
@@ -86,15 +86,21 @@
 
       <dl><dt>
           
-          <code><a href="adjustment_formula.html">adjustment_formula()</a></code> 
-        </dt>
-        <dd>Specify the cycle threshold adjustment model formula</dd>
-      </dl><dl><dt>
-          
           <code><a href="epict.html">epict()</a></code> 
         </dt>
         <dd>Model Cycle Thresholds</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="preprocess">Preprocess<a class="anchor" aria-label="anchor" href="#preprocess"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions for preprocessing observations.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="epict_check_obs.html">epict_check_obs()</a></code> 
         </dt>
@@ -109,11 +115,6 @@
           <code><a href="epict_clean_factors.html">epict_clean_factors()</a></code> 
         </dt>
         <dd>Clean up factor levels</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epict_convert_to_list.html">epict_convert_to_list()</a></code> 
-        </dt>
-        <dd>Format observations and model settings for use with stan</dd>
       </dl><dl><dt>
           
           <code><a href="epict_drop_na_ct.html">epict_drop_na_ct()</a></code> 
@@ -131,6 +132,32 @@
         <dd>Flag potentially spurious observations</dd>
       </dl><dl><dt>
           
+          <code><a href="epict_make_time_rel.html">epict_make_time_rel()</a></code> 
+        </dt>
+        <dd>Make time relative to first date of the test.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_make_time_rel_to_first_uncensored.html">epict_make_time_rel_to_first_uncensored()</a></code> 
+        </dt>
+        <dd>Make time relative to first uncensored test per ID</dd>
+      </dl></div><div class="section level2">
+      <h2 id="model-tools">Model tools<a class="anchor" aria-label="anchor" href="#model-tools"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions that assist with designing and setting up models.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="adjustment_formula.html">adjustment_formula()</a></code> 
+        </dt>
+        <dd>Specify the cycle threshold adjustment model formula</dd>
+      </dl><dl><dt>
+          
           <code><a href="epict_formula_as_list.html">epict_formula_as_list()</a></code> 
         </dt>
         <dd>Format formula data for use with stan</dd>
@@ -144,26 +171,6 @@
           <code><a href="epict_inference_opts.html">epict_inference_opts()</a></code> 
         </dt>
         <dd>Format inference options for use with stan</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epict_inits.html">epict_inits()</a></code> 
-        </dt>
-        <dd>Set up initial conditions for model</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epict_make_time_rel.html">epict_make_time_rel()</a></code> 
-        </dt>
-        <dd>Make time relative to first date of the test.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epict_make_time_rel_to_first_uncensored.html">epict_make_time_rel_to_first_uncensored()</a></code> 
-        </dt>
-        <dd>Make time relative to first uncensored test per ID</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epict_model.html">epict_model()</a></code> 
-        </dt>
-        <dd>Load and compile the Cycle thresholds model</dd>
       </dl><dl><dt>
           
           <code><a href="epict_model_opts.html">epict_model_opts()</a></code> 
@@ -191,11 +198,6 @@
         <dd>Extract summarised posteriors to use as priors</dd>
       </dl><dl><dt>
           
-          <code><a href="epict_priors.html">epict_priors()</a></code> 
-        </dt>
-        <dd>Default model priors</dd>
-      </dl><dl><dt>
-          
           <code><a href="piecewise_formula.html">piecewise_formula()</a></code> 
         </dt>
         <dd>Specify the cycle threshold adjustment model formula</dd>
@@ -204,8 +206,100 @@
           <code><a href="select_piecewise_parameters.html">select_piecewise_parameters()</a></code> 
         </dt>
         <dd>Select the parameters to adjust in the piecewise model</dd>
-      </dl></div>
-  </main></div>
+      </dl></div><div class="section level2">
+      <h2 id="model">Model<a class="anchor" aria-label="anchor" href="#model"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions for fitting models.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="epict_convert_to_list.html">epict_convert_to_list()</a></code> 
+        </dt>
+        <dd>Format observations and model settings for use with stan</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_inits.html">epict_inits()</a></code> 
+        </dt>
+        <dd>Set up initial conditions for model</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_model.html">epict_model()</a></code> 
+        </dt>
+        <dd>Load and compile the Cycle thresholds model</dd>
+      </dl><dl><dt>
+          
+          <code><a href="epict_priors.html">epict_priors()</a></code> 
+        </dt>
+        <dd>Default model priors</dd>
+      </dl></div><div class="section level2">
+      <h2 id="postprocess">Postprocess<a class="anchor" aria-label="anchor" href="#postprocess"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions for postprocessing model output.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      
+    </div><div class="section level2">
+      <h2 id="plot">Plot<a class="anchor" aria-label="anchor" href="#plot"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions for plotting observations and model output</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      
+    </div><div class="section level2">
+      <h2 id="generate-data">Generate data<a class="anchor" aria-label="anchor" href="#generate-data"></a></h2>
+      
+      <p class="section-desc"></p><p>Functions for generating simulated data.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      
+    </div><div class="section level2">
+      <h2 id="datasets">Datasets<a class="anchor" aria-label="anchor" href="#datasets"></a></h2>
+      
+      <p class="section-desc"></p><p>Package datasets used in examples and by users to explore the package functionality.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      
+    </div><div class="section level2">
+      <h2 id="utilities">Utilities<a class="anchor" aria-label="anchor" href="#utilities"></a></h2>
+      
+      <p class="section-desc"></p><p>Utility tools and functionality</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      
+    </div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="copyright">
