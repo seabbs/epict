@@ -292,7 +292,7 @@ epict_filter_ids <- function(obs, min_uncensored_tests = 2,
 #' @examples
 #' obs <- data.frame(
 #'  m = c("fa", "aefwe", "efe"),
-#'  c = as.factor(c("fa", "asas", "asa"))
+#'  c = factor(c("fa", "asas", "asa"), levels = c("fa"))
 #')
 #' summary(obs)
 #' 
