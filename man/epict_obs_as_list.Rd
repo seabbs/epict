@@ -27,7 +27,8 @@ A list as required by stan.
 \description{
 Formats observations for use in the stan model. Note that the
 censoring limit is set internally in this function based on the minimum
-cycle threshold value present for a censored test.
+cycle threshold value present for a censored test. The package stan code
+(accessed using \code{\link[=epict_model]{epict_model()}}) has more extensive documentation.
 }
 \seealso{
 Functions used to design and setup models

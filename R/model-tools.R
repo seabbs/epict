@@ -1,5 +1,8 @@
 #' Format observed symptom onset data for use with stan
 #'
+#' The package stan code (accessed using [epict_model()]) has
+#' more extensive documentation.
+#' 
 #' @param onsets Logical, defaults to `TRUE`. Should symptom onsets 
 #' observations be included in the model if available.
 #' 
@@ -47,7 +50,8 @@ epict_onset_obs_as_list <- function(obs, onsets = TRUE) {
 #'
 #' Formats observations for use in the stan model. Note that the
 #' censoring limit is set internally in this function based on the minimum
-#' cycle threshold value present for a censored test.
+#' cycle threshold value present for a censored test. The package stan code
+#' (accessed using [epict_model()]) has more extensive documentation.
 #' 
 #' @return A list as required by stan.
 #' @inheritParams epict_check_obs
@@ -61,7 +65,6 @@ epict_obs_as_list <- function(obs) {
   obs[, obs_id := 1:.N]
   tests_per_id <- obs[, .(n = .N), by = "id"]$n
 
-  # See stan code for docs
   data <- list(
     N = obs[, .N],
     P = length(unique(obs$id)),
@@ -227,6 +230,9 @@ epict_model_opts <- function(onsets = TRUE, switch = FALSE,
 }
 
 #' Format formula data for use with stan
+#' 
+#' The package stan code (accessed using [epict_model()]) has
+#' extensive more extensive documentation.
 #' 
 #' @param piecewise_formula A list describing the piecewise linear cycle threshold
 #' formula as described by [piecewise_formula()].

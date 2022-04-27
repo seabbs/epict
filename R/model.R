@@ -203,27 +203,32 @@ epict_inits <- function(data, scale = 0.1) {
         1:data$P,
         ~ truncnorm::rtruncnorm(
           1,
-          a = max(-data$onset_time[.], 0),
-          mean = max(-data$onset_time[.] + 5, 5), sd = 1
+          a = -data$onset_time[.],
+          mean = -data$onset_time[.] + data$t_inf_p[1],
+          sd = data$t_inf_p[2] * scale
         )
       ),
       c_int = truncnorm::rtruncnorm(
         1,
-        a = data$c_lod, mean = data$c_lod + 10, sd = 1
+        a = data$c_lod,
+        mean = data$c_lod + data$c_int_p[1],
+        sd = data$c_int_p[2] * scale
       ),
-      c_p_int = rnorm(1, 0, 1),
-      t_p_int = rnorm(1, 1.61, 0.5),
-      t_clear_int = rnorm(1, 2.3, 0.5),
+      c_p_int = rnorm(1, data$c_p_p[1], data$c_p_p[2]),
+      t_p_int = rnorm(1, data$t_p_p[1], data$t_p_p[2]),
+      t_clear_int = rnorm(1, data$t_clear_p[1], data$t_clear_p[2]),
       ind_var = abs(rnorm(data$K, 0, data$ind_var_sd * scale)),
       ind_eta = matrix(
         rnorm(data$P * data$K, 0, 1), nrow = data$K, ncol = data$P
       ),
-      sigma = truncnorm::rtruncnorm(1, a = 0, mean = 5, sd = 0.5)
+      sigma = truncnorm::rtruncnorm(
+        1, a = 0, mean = data$sigma_p[1], sd = data$sigma_p[2]
+      )
     )
 
     if (data$switch > 0) {
-      inits$c_s_int <- array(rnorm(1, 0, 1))
-      inits$t_s_int <- array(rnorm(1, 1.61, 0.5))
+      inits$c_s_int <- array(rnorm(1, data$c_s_p[1], data$c_s_p[2]))
+      inits$t_s_int <- array(rnorm(1, data$t_s_p[1], data$t_s_p[2]))
     }
 
     if (data$preds > 0) {
@@ -276,10 +281,11 @@ epict_inits <- function(data, scale = 0.1) {
     }
 
     if (data$any_onsets == 1) {
-      inits$inc_mean <- rnorm(1, data$lmean[1], data$lmean[2] * 0.1)
-      inits$inc_sd <- truncnorm::rtruncnorm(
-        1,
-        a = 0, mean = data$lsd[1], sd = data$lsd[2] * 0.1
+      inits$inc_mean_int <- rnorm(
+        1, data$inc_mean_p[1], data$inc_mean_p[2] * scale
+     )
+      inits$inc_sd_int <- truncnorm::rtruncnorm(
+        1, a = 0, mean =  data$inc_sd_p[1], sd = data$inc_sd_p[2] * scale
       )
     }
     return(inits)

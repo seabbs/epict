@@ -4,11 +4,15 @@
 \alias{epict_priors}
 \title{Default model priors}
 \usage{
-epict_priors(individual_variation = c(0, 0.05))
+epict_priors(individual_variation = c(0, 0.05), include_descriptive = FALSE)
 }
 \arguments{
 \item{individual_variation}{A vector of length two specifying the
 default mean and standard deviation of individual-level variation.}
+
+\item{include_descriptive}{Logical, defaults \code{FALSE}. Should an extended
+list of priors be returned including transformed parameters. This is useful
+when transforming model output and for user exploration.}
 }
 \value{
 A data frame summarising the model priors.
@@ -18,6 +22,9 @@ Default model priors
 }
 \examples{
 epict_priors()
+
+# Also include descriptive parameters
+epict_priors(include_descriptive = TRUE)
 }
 \seealso{
 Functions used for modelling

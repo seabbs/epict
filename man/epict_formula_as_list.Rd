@@ -24,7 +24,8 @@ by \code{\link[=epict_ct_model_opts]{epict_ct_model_opts()}}.}
 A list as required by stan.
 }
 \description{
-Format formula data for use with stan
+The package stan code (accessed using \code{\link[=epict_model]{epict_model()}}) has
+extensive more extensive documentation.
 }
 \seealso{
 Functions used to design and setup models
