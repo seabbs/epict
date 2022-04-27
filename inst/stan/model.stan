@@ -37,7 +37,7 @@ data {
   // User specified population-level parameters
   int switch; //Should a secondary breakpoint in the CT curve be modelled
   real c_lod; // Ct value at limit of detection (censoring Ct value)
-  array[2] real c_int_p; // Prior on initial/final Ct value
+  array[2] real c_thres_p; // Prior on initial/final Ct value
   array[2] real sigma_p; // Prior on the observation error
   array[2] real c_p_p; // intercept of peak Ct (mean + sd)
   array[2] real t_p_p; // intercept of time at peak Ct (mean + sd)
@@ -99,12 +99,12 @@ transformed data {
   vector[P] t_inf_bound;
   vector[P] t_inf_mean;
   vector[61] sim_times;
-  real c_int_mean;
+  real c_thres_mean;
   for (i in 1:P) {
     t_inf_bound[i] = max({-onset_time[i], 0});
   }
   t_inf_mean = t_inf_bound + t_inf_p[1];
-  c_int_mean = c_lod + c_int_p[1];
+  c_thres_mean = c_lod + c_thres_p[1];
   for (i in 0:60) {
     sim_times[i + 1] = i;
   }
@@ -112,7 +112,7 @@ transformed data {
 
 parameters {
   // Population-level parameters
-  real<lower = c_lod> c_int;   // Ct value before and after infection
+  real<lower = c_lod> c_thres;   // Ct value before and after infection
   real c_p_int; // Intercept of Ct value of viral load at peak
   real t_p_int; // Intercept of time at peak
   array[switch] real c_s_int; // Intercept of Ct value at switch
@@ -157,14 +157,14 @@ transformed parameters {
   // Optional effects if a second breakpoint is used
   if (switch) {
     t_s = exp(combine_effects(t_s_int[1], beta_t_s, design) + eta[, 4]);
-    c_s = c_int * inv_logit(
+    c_s = c_thres * inv_logit(
       combine_effects(c_s_int[1], beta_c_s, design) + eta[, 5]
     );
     c_p = c_s .* c_p;
   }else{
     c_s = rep_vector(0.0, P);
     t_s = rep_vector(0.0, P);
-    c_p = c_int * c_p;
+    c_p = c_thres * c_p;
   }
 }
   // Make times absolute
@@ -177,7 +177,7 @@ transformed parameters {
   }
   // Expected ct value given viral load parameters
   exp_ct = piecewise_ct_by_id(
-    inf_rel, c_int, c_p, c_s, c_int, 0, t_p, t_s, t_clear_abs, id,
+    inf_rel, c_thres, c_p, c_s, c_thres, 0, t_p, t_s, t_clear_abs, id,
     tests_per_id, cum_tests_per_id, switch
   );
   // Shift and scale ct values
@@ -205,7 +205,7 @@ model {
     t_inf ~ normal(t_inf_mean, t_inf_p[2]); 
   }
   // CT piecewise linear intercept parameters
-  c_int ~ normal(c_int_mean, c_int_p[2]) T[c_lod, ];
+  c_thres ~ normal(c_thres_mean, c_thres_p[2]) T[c_lod, ];
   c_p_int ~ normal(c_p_p[1], c_p_p[2]); // Mean at 50% of switch value
   t_p_int ~ normal(t_p_p[1], t_p_p[2]); // Mean at log(5)
   //mean at log(10) + peak + scale timing 

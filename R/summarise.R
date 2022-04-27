@@ -1,5 +1,5 @@
-summarise_coeff_pp <- function(fit, params, exponentiate = FALSE) {
-  params <- select_piecewise_parameters(params)
+epict_summarise_coeff_pp <- function(fit, params, exponentiate = FALSE) {
+  params <- epict::select_piecewise_parameters(params)
   params <- names(params[purrr::map_lgl(params, ~ . == 1)])
 
   draws <- fit$summary(
@@ -14,8 +14,8 @@ summarise_coeff_pp <- function(fit, params, exponentiate = FALSE) {
   return(draws[])
 }
 
-summarise_draws <- function(draws, by = c("id", "time")) {
-  out <- data.table::copy(draws)
+epict_summarise_draws <- function(draws, by = c("id", "time")) {
+  out <- data.table::as.data.table(draws)
   out <- out[,
     .(
       median = quantile(value, c(0.5), na.rm = TRUE),
@@ -31,8 +31,9 @@ summarise_draws <- function(draws, by = c("id", "time")) {
   return(out[])
 }
 
-summarise_effects <- function(draws, design, variables, exponentiate = TRUE) {
-  eff_draws <- extract_coeffs(
+epict_summarise_effects <- function(draws, design, variables,
+                                    exponentiate = TRUE) {
+  eff_draws <- epict::epict_extract_coeffs(
     draws,
     exponentiate = exponentiate, design = design, variables
   )
@@ -41,12 +42,12 @@ summarise_effects <- function(draws, design, variables, exponentiate = TRUE) {
   if (!missing(design)) {
     by <- c(by, "predictor")
   }
-  eff_summary <- summarise_draws(eff_draws, by = by)
+  eff_summary <- epict::epict_summarise_draws(eff_draws, by = by)
   return(eff_summary)
 }
 
-summarise_adjustment <- function(draws, design) {
-  eff_draws <- extract_coeffs(
+epict_summarise_adjustment <- function(draws, design) {
+  eff_draws <- epict::epict_extract_coeffs(
     draws,
     exponentiate = FALSE, design = design,
     variables = c("ct_shift", "ct_scale")
@@ -58,13 +59,13 @@ summarise_adjustment <- function(draws, design) {
   if (!missing(design)) {
     by <- c(by, "predictor")
   }
-  eff_summary <- summarise_draws(eff_draws, by = by)
+  eff_summary <- epict::epict_summarise_draws(eff_draws, by = by)
   return(eff_summary)
 }
 
-summarise_pp <- function(fit, obs) {
-  ct_pp <- extract_posterior_predictions(fit, obs)
-  ct_pp <- summarise_draws(
+epict_summarise_pp <- function(fit, obs) {
+  ct_pp <- epict::epict_extract_pp(fit, obs)
+  ct_pp <- epict::epict_summarise_draws(
     ct_pp[, value := sim_ct],
     by = c("id", "t", "obs")
   )

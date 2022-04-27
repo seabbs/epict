@@ -1,16 +1,16 @@
-extract_subjects <- function(dt) {
-  subjects <- data.table::copy(dt)
+epict_extract_subjects <- function(dt) {
+  subjects <- data.table::as.data.table(dt)
   subjects <- subjects[, .SD[1, ], by = "id"]
   return(subjects[])
 }
 
-extract_draws <- function(fit, params = NULL, format = "df") {
+epic_extract_draws <- function(fit, params = NULL, format = "df") {
   draws <- fit$draws(format = format, variables = params)
   draws <- data.table::as.data.table(draws)
   return(draws[])
 }
 
-extract_params <- function(draws, params, by) {
+epict_extract_params <- function(draws, params, by) {
   if (!missing(by)) {
     params <- c(params, by)
   }
@@ -19,46 +19,48 @@ extract_params <- function(draws, params, by) {
   draws <- draws[, ..cols]
   return(draws[])
 }
-extract_ct_params <- function(draws, params = c(
-                                "c_int", "c_p_int",
+
+epict_extract_ct_params <- function(draws, params = c(
+                                "c_thres", "c_p_int",
                                 "c_s_int[1]", "t_p_int",
-                                "t_s_int[1]", "t_clear_mean"
+                                "t_s_int[1]", "t_clear_int"
                               ),
-                              mean = TRUE, by) {
+                              intercept = TRUE, by) {
   if (!mean) {
-    params <- stringr::str_remove(params, "_mean")
+    params <- stringr::str_remove(params, "_int")
     params <- stringr::str_remove(params, "\\[1\\]")
   }
-  draws <- extract_params(draws, params = params, by)
-  colnames(draws) <- stringr::str_remove(colnames(draws), "_mean")
+  draws <- epict::epict_extract_params(draws, params = params, by)
+  colnames(draws) <- stringr::str_remove(colnames(draws), "_int")
   colnames(draws) <- stringr::str_remove(colnames(draws), "\\[1\\]")
   return(draws[])
 }
 
-extract_ip_params <- function(draws, params = c(
+epict_extract_ip_params <- function(draws, params = c(
                                 "inc_mean[1]", "inc_mean",
                                 "inc_sd[1]", "inc_sd"
                               ),
                               by) {
-  draws <- extract_params(draws, params = params, by)
+  draws <- epict::epict_extract_params(draws, params = params, by)
   colnames(draws) <- purrr::map_chr(
     colnames(draws), ~ stringr::str_split(., "\\[[0-9]\\]")[[1]][1]
   )
-  return(draws)
+  return(draws[])
 }
 
-extract_param_draws <- function(draws) {
+epict_extract_param_draws <- function(draws) {
   draws <- cbind(
-    extract_ct_params(draws),
-    extract_ip_params(draws)[, .(inc_mean, inc_sd)]
+    epict::epict_extract_ct_params(draws),
+    epict::epict_extract_ip_params(draws)[, .(inc_mean, inc_sd)]
   )
-  return(draws)
+  return(draws[])
 }
 
-extract_coeffs <- function(draws, exponentiate = FALSE, design, variables) {
+epict_extract_coeffs <- function(draws, exponentiate = FALSE,
+                                 design, variables) {
   beta_cols <- grep("beta_", colnames(draws), value = TRUE)
   cols <- c(".iteration", ".draw", ".chain", beta_cols)
-  draws <- draws[, ..cols]
+  draws <- data.table::as.data.table(draws)[, ..cols]
 
   if (exponentiate) {
     draws[, (beta_cols) := lapply(.SD, exp), .SDcols = beta_cols]
@@ -66,7 +68,7 @@ extract_coeffs <- function(draws, exponentiate = FALSE, design, variables) {
 
   setnames(draws, beta_cols, gsub("beta_", "", beta_cols))
 
-  draws <- melt_draws(draws)
+  draws <- epict::epict_melt_draws(draws)
 
   draws <- draws[
     ,
@@ -91,22 +93,24 @@ extract_coeffs <- function(draws, exponentiate = FALSE, design, variables) {
   return(draws[])
 }
 
-melt_draws <- function(draws, ids = c(".chain", ".iteration", ".draw")) {
+epict_melt_draws <- function(draws, ids = c(".chain", ".iteration", ".draw")) {
   data.table::melt(draws, id.vars = ids)
 }
 
-extract_ct_trajectories <- function(fit, variable = "ct", inf_time = TRUE) {
-  dt_draws <- extract_draws(fit, params = variable, format = "array")
+epict_extract_ct_trajectories <- function(fit, variable = "ct",
+                                          infection_time = TRUE) {
+  dt_draws <- epict::epict_extract_draws(
+    fit, params = variable, format = "array"
+  )
 
-  obs_out <- dt_draws[
-    ,
+  obs_out <- dt_draws[,
     c("id", "time") := tstrsplit(variable, ",")
   ][
     ,
-    id := str_remove(id, paste0("ct", "\\["))
+    id := stringr::str_remove(id, paste0("ct", "\\["))
   ][
     ,
-    time := str_remove(time, "\\]")
+    time := stringr::str_remove(time, "\\]")
   ][
     ,
     time := as.numeric(time)
@@ -120,7 +124,7 @@ extract_ct_trajectories <- function(fit, variable = "ct", inf_time = TRUE) {
     order(id, time)
   ]
 
-  if (inf_time) {
+  if (infection_time) {
     inf_time_draws <- extract_draws(fit, params = "t_inf", format = "array")[
       ,
       id := str_remove(variable, "t_inf\\[")

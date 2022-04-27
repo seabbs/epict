@@ -12,7 +12,7 @@
 #' @author Sam Abbott
 #' @examples
 #' # ADD_EXAMPLES_HERE
-epict_update_variable_labels <- function(
+update_variable_labels <- function(
   draws, reverse = FALSE, 
   variables = epict::epict_priors(include_descriptive = TRUE)
 ) {

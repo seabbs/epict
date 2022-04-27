@@ -4,21 +4,21 @@ transform_to_model <- function(draws) {
   if (is.null(draws[["t_s"]])) {
     draws[, t_s := -Inf]
   }
-  
+
   draws[
     ,
     `:=`(
       t_p = exp(t_p),
       t_s = exp(t_s),
       t_clear = exp(t_clear),
-      c_int = c_int
+      c_thres = c_thres
     )
   ]
 
   if (is.null(draws[["c_s"]])) {
-    draws[, c_s := c_int]
+    draws[, c_s := c_thres]
   }else{
-    draws[, c_s := c_int * plogis(c_s)]
+    draws[, c_s := c_thres * plogis(c_s)]
   }
   
   draws[

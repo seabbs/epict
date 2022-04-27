@@ -23,7 +23,7 @@ epict_priors <- function(individual_variation = c(0, 0.05),
   priors <- data.table::data.table(
     variable = c(
       "t_inf",
-      "c_int",
+      "c_thres",
       "c_p",
       "t_p",
       "c_s",
@@ -208,11 +208,11 @@ epict_inits <- function(data, scale = 0.1) {
           sd = data$t_inf_p[2] * scale
         )
       ),
-      c_int = truncnorm::rtruncnorm(
+      c_thres = truncnorm::rtruncnorm(
         1,
         a = data$c_lod,
-        mean = data$c_lod + data$c_int_p[1],
-        sd = data$c_int_p[2] * scale
+        mean = data$c_lod + data$c_thres_p[1],
+        sd = data$c_thres_p[2] * scale
       ),
       c_p_int = rnorm(1, data$c_p_p[1], data$c_p_p[2]),
       t_p_int = rnorm(1, data$t_p_p[1], data$t_p_p[2]),
