@@ -81,7 +81,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">epict_priors</span><span class="op">(</span>individual_variation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">epict_priors</span><span class="op">(</span>individual_variation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.05</span><span class="op">)</span>, include_descriptive <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,6 +89,10 @@
     <dl><dt>individual_variation</dt>
 <dd><p>A vector of length two specifying the
 default mean and standard deviation of individual-level variation.</p></dd>
+<dt>include_descriptive</dt>
+<dd><p>Logical, defaults <code>FALSE</code>. Should an extended
+list of priors be returned including transformed parameters. This is useful
+when transforming model output and for user exploration.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -157,6 +161,73 @@ default mean and standard deviation of individual-level variation.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  9:         0.07                        NA                      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10:         2.00                        NA                      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11:           NA                        NA                      NA</span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># Also include descriptive parameters</span></span>
+<span class="r-in"><span class="fu">epict_priors</span><span class="op">(</span>include_descriptive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         variable                                           name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:        t_inf Time between infection and first positive test</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:        c_int             Ct value at clearance of infection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:          c_p                               Ct value at peak</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:          t_p                                Time at peak Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:          c_s                             Ct value at switch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:          t_s                              Time at switch Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:      t_clear                 Time at clearance of infection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     inc_mean                   Incubation period (log) mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:       inc_sd     Incubation period (log) standard deviation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:        sigma                 Observation standard deviation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:          lkj         Lewandowski-Kurowicka-Joe distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:     ct_shift                        Ct intercept adjustment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:     ct_scale                   Ct multiplicative adjustment</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14: nat_inc_mean                       Incubation period (mean)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:   nat_inc_sd         Incubation period (standard deviation)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                               detail</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                                                                                                                                                                                     Offset by onset if available</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:                                                                                                                                                                   Offset by user specified limit of Ct detection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                                                                                                                     Logit scale offset by latent limit of detection/Ct at switch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                                                                                                                                                                        Log scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                                                                                                                                  Logit scale offset by latent limit of detection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                                                                                                                                        Log scale relative to the time at peak Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                                                                                                                                            Relative to time at peak and switch C</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                                                                                                                                       Parameterised as a log-normal distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                                                                                                                                                       Parameterised as a log-normal distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                                                                                                                                                                    Assuming a normal error model</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: Prior used for the individual-level correlation matrix. There is \n      one parameter which at 1 represents a uniform prior. Smaller values indicate strong correlations, and larger values weaker correlations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                         Cycle threshold intercept adjustment with an intercept set to 0 (i. no \n      adjustment. This is adjusted using `adjustment_formula()`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                          Cycle threshold gradient adjustment with an intercept set to 1 (i. no \n      adjustment. This is adjusted using `adjustment_formula()`</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                                                                                                                      Incubation period mean on the natural scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                                                                                                        Incubation period standard deviation on the natural scale</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                distribution intercept_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:                        Normal (truncated by onset or 0)           5.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: Normal (truncated by user specified limit of detection)          10.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:                                                  Normal           0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:                                                  Normal           1.61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:                                                  Normal           0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:                                                  Normal           1.61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:                                                  Normal           2.30</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:                                                  Normal           1.62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:                                   Zero truncated normal           0.42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                   Zero truncated normal           2.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:            Lewandowski-Kurowicka-Joe (LKJ) distribution           1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:                                                                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:                                                                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:                                                                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:                                                                     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     intercept_sd individual_variation_mean individual_variation_sd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:         5.00                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:        10.00                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:         1.00                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:         0.50                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:         1.00                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:         0.50                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:         0.50                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:         0.06                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:         0.07                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:         2.00                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:           NA                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:           NA                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:           NA                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:           NA                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:           NA                        NA                      NA</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
