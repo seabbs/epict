@@ -3,6 +3,10 @@
 #' @param individual_variation A vector of length two specifying the 
 #' default mean and standard deviation of individual-level variation.
 #' 
+#' @param include_descriptive Logical, defaults `FALSE`. Should an extended
+#' list of priors be returned including transformed parameters. This is useful
+#' when transforming model output and for user exploration.
+#' 
 #' @return A data frame summarising the model priors.
 #'
 #' @importFrom data.table data.table
@@ -11,7 +15,11 @@
 #' @author Sam Abbott
 #' @examples
 #' epict_priors()
-epict_priors <- function(individual_variation = c(0, 0.05)) {
+#' 
+#' # Also include descriptive parameters
+#' epict_priors(include_descriptive = TRUE)
+epict_priors <- function(individual_variation = c(0, 0.05),
+                         include_descriptive = FALSE) {
   priors <- data.table::data.table(
     variable = c(
       "t_inf",
@@ -24,20 +32,28 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "inc_mean",
       "inc_sd",
       "sigma",
-      "lkj"
+      "lkj",
+      "ct_shift",
+      "ct_scale",
+      "nat_inc_mean",
+      "nat_inc_sd"
     ),
     name = c(
       "Time between infection and first positive test",
-      "Latent upper Ct bound",
-      "Peak Ct",
+      "Ct value at clearance of infection",
+      "Ct value at peak",
       "Time at peak Ct",
-      "Switch Ct",
+      "Ct value at switch",
       "Time at switch Ct",
       "Time at clearance of infection",
-      "Mean of the incubation period",
-      "Standard deviation of the incubation period",
+      "Incubation period (log) mean",
+      "Incubation period (log) standard deviation",
       "Observation standard deviation",
-      "Lewandowski-Kurowicka-Joe distribution"
+      "Lewandowski-Kurowicka-Joe distribution",
+      "Ct intercept adjustment",
+      "Ct multiplicative adjustment",
+      "Incubation period (mean)",
+      "Incubation period (standard deviation)"
     ),
     detail = c(
       "Offset by onset if available",
@@ -51,7 +67,13 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Parameterised as a log-normal distribution",
       "Assuming a normal error model",
       "Prior used for the individual-level correlation matrix. There is 
-      one parameter which at 1 represents a uniform prior. Smaller values indicate strong correlations, and larger values weaker correlations"
+      one parameter which at 1 represents a uniform prior. Smaller values indicate strong correlations, and larger values weaker correlations",
+      "Cycle threshold intercept adjustment with an intercept set to 0 (i. no 
+      adjustment. This is adjusted using `adjustment_formula()`",
+      "Cycle threshold gradient adjustment with an intercept set to 1 (i. no 
+      adjustment. This is adjusted using `adjustment_formula()`",
+      "Incubation period mean on the natural scale",
+      "Incubation period standard deviation on the natural scale"
     ),
     distribution = c(
       "Normal (truncated by onset or 0)",
@@ -64,23 +86,40 @@ epict_priors <- function(individual_variation = c(0, 0.05)) {
       "Normal",
       "Zero truncated normal",
       "Zero truncated normal",
-      "Lewandowski-Kurowicka-Joe (LKJ) distribution"
+      "Lewandowski-Kurowicka-Joe (LKJ) distribution",
+      "",
+      "",
+      "",
+      ""
     ),
-    intercept_mean = c(5, 10, 0, 1.61, 0, 1.61, 2.3, 1.62, 0.42, 2, 1),
-    intercept_sd = c(5, 10, 1, 0.5, 1, 0.5, 0.5, 0.06, 0.07, 2, NA)
+    intercept_mean = c(
+      5, 10, 0, 1.61, 0, 1.61, 2.3, 1.62, 0.42, 2, 1, NA, NA, NA, NA
+    ),
+    intercept_sd = c(
+      5, 10, 1, 0.5, 1, 0.5, 0.5, 0.06, 0.07, 2, NA, NA, NA, NA, NA
+    )
   )
 
   priors[, `:=`(
-    individual_variation_mean = individual_variation[1],
-    individual_variation_sd = individual_variation[2]
+    individual_variation_mean = NA_real_,
+    individual_variation_sd = NA_real_
   )]
 
+  params_with_var <- c(
+    "c_p", "t_p", "t_s", "c_s", "t_clear"
+  )
   priors[
-    variable %in% c("sigma", "c_int", "lkj"), individual_variation_mean := NA
+    variable %in% params_with_var,
+    individual_variation_mean := individual_variation[1]
   ]
   priors[
-    variable %in% c("sigma", "c_int", "lkj"), individual_variation_sd := NA
+    variable %in% params_with_var,
+    individual_variation_sd := individual_variation[2]
   ]
+
+  if (!include_descriptive) {
+    priors <- priors[!is.na(intercept_mean)]
+  }
   return(priors[])
 }
 

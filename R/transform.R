@@ -1,23 +1,27 @@
 transform_to_model <- function(draws) {
-  draws <- data.table::copy(draws)
+  draws <- data.table::as.data.table(draws)
 
   if (is.null(draws[["t_s"]])) {
     draws[, t_s := -Inf]
   }
-
-  if (is.null(draws[["c_s"]])) {
-    draws[, c_s := c_int]
-  }
+  
   draws[
     ,
     `:=`(
       t_p = exp(t_p),
       t_s = exp(t_s),
       t_clear = exp(t_clear),
-      c_int = c_int,
-      c_s = c_int * plogis(c_s)
+      c_int = c_int
     )
-  ][
+  ]
+
+  if (is.null(draws[["c_s"]])) {
+    draws[, c_s := c_int]
+  }else{
+    draws[, c_s := c_int * plogis(c_s)]
+  }
+  
+  draws[
     ,
     c_p := c_s * plogis(c_p)
   ]

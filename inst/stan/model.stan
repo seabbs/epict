@@ -8,6 +8,7 @@
 // @author Tim Russell
 // @author Joel Hellewell
 functions{ 
+#include functions/construct_individual_variation.stan
 #include functions/piecewise_ct.stan
 #include functions/combine_effects.stan
 #include functions/onsets_lmpf.stan
@@ -146,24 +147,9 @@ transformed parameters {
   vector[nonsets ? P :0] onsets_log_lik;
 {
   matrix[P, K] eta;
-  if (ind_corr) {
-    // Cholesky factor of the covariance matrix
-    matrix[K, K] L;
-    L = diag_pre_multiply(ind_var, L_Omega);
-
-    // Calculate per-infection correlated effects
-    eta = (L * ind_eta)';
-  }else{
-    if (ind_var_m) {
-      // All effects are independent
-      for (i in 1:K) {
-        eta[1:P, i] = to_vector(ind_eta[i, 1:P]) * ind_var[i];
-      }
-    }else{
-      // No infection level differences
-      eta = rep_matrix(0, P, K);
-    }
-  }
+  eta = construct_individual_variation(
+    ind_eta, ind_var, P, K, ind_corr, L_Omega, ind_var_m
+  );
   // Combine effects for each CT parameter and transform to required scale
   t_p = exp(combine_effects(t_p_int, beta_t_p, design) + eta[, 1]);
   t_clear = exp(combine_effects(t_clear_int, beta_t_clear, design) + eta[, 2]);

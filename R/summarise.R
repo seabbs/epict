@@ -1,14 +1,3 @@
-summarise_pop_pp <- function(fit) {
-  draws <- fit$summary(
-    variables = c(
-      "t_p_int", "t_s_int[1]", "t_clear_mean", "c_p_int",
-      "c_s_int[1]", "inc_mean", "inc_sd"
-    )
-  )
-  draws <- data.table::as.data.table(draws)
-  return(draws[])
-}
-
 summarise_coeff_pp <- function(fit, params, exponentiate = FALSE) {
   params <- select_piecewise_parameters(params)
   params <- names(params[purrr::map_lgl(params, ~ . == 1)])
