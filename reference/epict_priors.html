@@ -111,14 +111,14 @@ default mean and standard deviation of individual-level variation.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">epict_priors</span><span class="op">(</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     variable                                           name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  1:    t_inf Time between infection and first positive test</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    c_int                          Latent upper Ct bound</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  3:      c_p                                        Peak Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:    c_int             Ct value at clearance of infection</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:      c_p                               Ct value at peak</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4:      t_p                                Time at peak Ct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      c_s                                      Switch Ct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:      c_s                             Ct value at switch</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  6:      t_s                              Time at switch Ct</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  7:  t_clear                 Time at clearance of infection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8: inc_mean                  Mean of the incubation period</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   inc_sd    Standard deviation of the incubation period</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: inc_mean                   Incubation period (log) mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:   inc_sd     Incubation period (log) standard deviation</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10:    sigma                 Observation standard deviation</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11:      lkj         Lewandowski-Kurowicka-Joe distribution</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                               detail</span>
@@ -146,15 +146,15 @@ default mean and standard deviation of individual-level variation.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10:                                   Zero truncated normal           2.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11:            Lewandowski-Kurowicka-Joe (LKJ) distribution           1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     intercept_sd individual_variation_mean individual_variation_sd</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  1:         5.00                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:         5.00                        NA                      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  2:        10.00                        NA                      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  3:         1.00                         0                    0.05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  4:         0.50                         0                    0.05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  5:         1.00                         0                    0.05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  6:         0.50                         0                    0.05</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  7:         0.50                         0                    0.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8:         0.06                         0                    0.05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  9:         0.07                         0                    0.05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:         0.06                        NA                      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:         0.07                        NA                      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10:         2.00                        NA                      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11:           NA                        NA                      NA</span>
 </code></pre></div>
