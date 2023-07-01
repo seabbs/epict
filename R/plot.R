@@ -166,8 +166,8 @@ plot_ct_summary <- function(draws, time_range = seq(0, 60, by = 0.25),
                             reverse = TRUE, simulated_samples = 1000, ...) {
   pop_draws <- extract_ct_params(draws, by = by, mean = FALSE)
 
-  pop_ct_draws <- pop_draws[.draw <= simulated_samples] %>%
-    transform_to_model() %>%
+  pop_ct_draws <- pop_draws[.draw <= simulated_samples] |>
+    transform_to_model() |>
     simulate_cts(time_range = time_range, obs_noise = FALSE)
 
   sum_cols <- c("value", "t", by)
@@ -184,15 +184,15 @@ plot_ct_summary <- function(draws, time_range = seq(0, 60, by = 0.25),
 
   no_switch <- is.null(pop_draws[["t_s"]])
 
-  param_pp <- pop_draws %>%
-    transform_to_natural() %>%
+  param_pp <- pop_draws |>
+    transform_to_natural() |>
     melt_draws(ids = c(".chain", ".iteration", ".draw", by))
 
   if (no_switch) {
     param_pp <- param_pp[!variable %in% c("t_s", "c_s")]
   }
-  param_pp_plot <- param_pp %>%
-    update_variable_labels() %>%
+  param_pp_plot <- param_pp |>
+    update_variable_labels() |>
     plot_density(...) +
     ggplot2::facet_wrap(~variable, nrow = 2, scales = "free_x") +
     guides(colour = guide_legend(nrow = 2), fill = guide_legend(nrow = 2))
@@ -208,7 +208,7 @@ plot_ip_summary <- function(draws, time_range = seq(0, 20, by = 0.25),
                             simulated_samples = 1000, ...) {
   ip_draws <- extract_ip_params(draws, by = by)
 
-  pop_ip_draws <- ip_draws[.draw <= simulated_samples] %>%
+  pop_ip_draws <- ip_draws[.draw <= simulated_samples] |>
     simulate_ips(time_range = time_range)
 
   sum_cols <- c("value", "t", by)
@@ -223,10 +223,10 @@ plot_ip_summary <- function(draws, time_range = seq(0, 20, by = 0.25),
   ) +
     guides(col = guide_none(), fill = guide_none())
 
-  param_pp_plot <- ip_draws %>%
-    transform_ip_to_natural() %>%
-    melt_draws(ids = c(".chain", ".iteration", ".draw", by)) %>%
-    update_variable_labels() %>%
+  param_pp_plot <- ip_draws |>
+    transform_ip_to_natural() |>
+    melt_draws(ids = c(".chain", ".iteration", ".draw", by)) |>
+    update_variable_labels() |>
     plot_density(...) +
     ggplot2::facet_wrap(~variable, nrow = 2, scales = "free_x") +
     guides(colour = guide_legend(nrow = 2), fill = guide_legend(nrow = 2))
@@ -298,18 +298,18 @@ plot_effect_summary <- function(draws, ct_design, adjustment_design, variables,
                                 variable_labels = function(dt, ...) {
                                   return(dt)
                                 }, ...) {
-  ct_plot <- draws %>%
-    summarise_effects(design = ct_design, variables = variables) %>%
-    update_predictor_labels() %>%
-    variable_labels(reverse = TRUE) %>%
+  ct_plot <- draws |>
+    summarise_effects(design = ct_design, variables = variables) |>
+    update_predictor_labels() |>
+    variable_labels(reverse = TRUE) |>
     plot_effects(...)
 
-  adjustment_plot <- draws %>%
+  adjustment_plot <- draws |>
     summarise_adjustment(
       design = adjustment_design
-    ) %>%
-    update_predictor_labels() %>%
-    variable_labels(reverse = TRUE) %>%
+    ) |>
+    update_predictor_labels() |>
+    variable_labels(reverse = TRUE) |>
     plot_effects(
       trans = "identity", ...
     )
