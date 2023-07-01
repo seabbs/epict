@@ -30,7 +30,8 @@ Suggests:
     covr,
     testthat (>= 3.0.0),
     rmarkdown,
-    spelling
+    spelling,
+    vdiffr
 Remotes:
     stan-dev/cmdstanr,
     stan-dev/loo

@@ -21,7 +21,8 @@ epict_theme <- function(flip = FALSE, legend_arg = FALSE) {
 }
 
 plot_obs <- function(obs, ct_traj, pp, traj_alpha = 0.05, onsets = TRUE,
-                     clod = 40, samples = 10, ...) {
+                     reverse = TRUE, clod = min(obs$ct_value, na.rm = TRUE),
+                     samples = 10, ...) {
   if (!missing(pp)) {
     obs <- cbind(
       obs[order(id)],
@@ -29,13 +30,15 @@ plot_obs <- function(obs, ct_traj, pp, traj_alpha = 0.05, onsets = TRUE,
     )
   }
 
-  plot <- ggplot(obs) +
-    aes(x = t, y = ct_value, ...) +
-    scale_colour_brewer(palette = "Dark2")
+  plot <- ggplot2::ggplot(obs) +
+    ggplot2::aes(x = t, y = ct_value, ...) +
+    ggplot2::scale_colour_brewer(palette = "Dark2")
 
   if (!is.null(obs$onset_time) & onsets) {
     plot <- plot +
-      geom_vline(aes(xintercept = onset_time), linetype = 2, alpha = 0.8)
+      ggplot2::geom_vline(
+        ggplot2::aes(xintercept = onset_time), linetype = 2, alpha = 0.8
+      )
   }
 
   if (!is.null(clod)) {
@@ -74,6 +77,11 @@ plot_obs <- function(obs, ct_traj, pp, traj_alpha = 0.05, onsets = TRUE,
       )
   }
 
+  if (reverse) {
+    plot<- plot +
+      ggplot2::scale_y_reverse()
+  }
+
   plot <- plot +
     epict_theme() +
     theme(legend.position = "bottom") +
@@ -85,7 +93,7 @@ plot_obs <- function(obs, ct_traj, pp, traj_alpha = 0.05, onsets = TRUE,
 }
 
 plot_ct_pp <- function(pp, sum_pp, onsets = TRUE, clod = 40, alpha = 0.05,
-                       ...) {
+                       reverse = TRUE, ...) {
   plot <- ggplot(pp) +
     aes(x = t, y = ct_value, group = interaction(.iteration, .chain), ...)
 
@@ -121,6 +129,11 @@ plot_ct_pp <- function(pp, sum_pp, onsets = TRUE, clod = 40, alpha = 0.05,
   plot <- plot +
     geom_line(alpha = alpha)
 
+  if (reverse) {
+    plot <- plot +
+     ggplot2::scale_y_reverse()
+  }
+
   plot <- plot +
     epict_theme() +
     labs(
@@ -150,7 +163,7 @@ plot_density <- function(draws, ...) {
 
 plot_ct_summary <- function(draws, time_range = seq(0, 60, by = 0.25),
                             samples = 100, by = c(), traj_alpha = 0.05,
-                            simulated_samples = 1000, ...) {
+                            reverse = TRUE, simulated_samples = 1000, ...) {
   pop_draws <- extract_ct_params(draws, by = by, mean = FALSE)
 
   pop_ct_draws <- pop_draws[.draw <= simulated_samples] %>%
@@ -165,7 +178,7 @@ plot_ct_summary <- function(draws, time_range = seq(0, 60, by = 0.25),
 
   ct_pp_plot <- plot_ct_pp(
     pop_ct_draws[.draw <= samples], pop_ct_sum,
-    alpha = traj_alpha, ...
+    alpha = traj_alpha, reverse = reverse, ...
   ) +
     guides(col = guide_none(), fill = guide_none())
 
@@ -228,12 +241,12 @@ plot_ip_summary <- function(draws, time_range = seq(0, 20, by = 0.25),
 plot_summary <- function(draws, ct_time_range = seq(0, 60, by = 0.25),
                          ip_time_range = seq(0, 20, by = 0.25), samples = 100,
                          by = c(), traj_alpha = 0.05, simulated_samples = 1000,
-                         ...) {
+                         reverse = TRUE, ...) {
   ct_pp <- plot_ct_summary(
     draws,
     time_range = ct_time_range, samples = samples, by = by,
     simulated_samples = simulated_samples, traj_alpha = traj_alpha,
-    ...
+    reverse = TRUE, ...
   )
 
   ip_pp <- plot_ip_summary(
