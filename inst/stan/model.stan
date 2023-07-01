@@ -177,7 +177,7 @@ transformed parameters {
   }
   // Expected ct value given viral load parameters
   exp_ct = piecewise_ct_by_id(
-    inf_rel, c_thres, c_p, c_s, c_thres, 0, t_p, t_s, t_clear_abs, id,
+    inf_rel, c_thres, c_p, c_s, c_thres, 0, t_p, t_s, t_clear, id,
     tests_per_id, cum_tests_per_id, switch
   );
   // Shift and scale ct values
