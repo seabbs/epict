@@ -7,7 +7,7 @@
 #'
 #' @param obs A data.frame with the following variables:
 #'  - `id`: An integer vector uniquely identifying each infection.
-#'  - `test_id`: An integer vector uniquely identiying each test
+#'  - `test_id`: An integer vector uniquely identifying each test
 #'  - `ct_value`: Numeric cycle threshold value.
 #'  - `test_date`: Date of the test yielding a Ct value. (optional)
 #'  - `t`: Time of test relative to a baseline date. Optional but required
@@ -15,12 +15,12 @@
 #'  - `onset_date`:e Date of onset for each infection (optional).
 #'  `NA` if unavailable/asymptomatic
 #'  - `onset_t`: Time on onset relative to a baseline date (optional).
-#'  - `censored`: Logical, indicating if the Ct has been censored. 
-#' 
+#'  - `censored`: Logical, indicating if the Ct has been censored.
+#'
 #' @param dates_available Logical, defaults to `TRUE`. Are dates available
 #' in the observed data. If `FALSE` it is assumed that relative times should be
 #' available instead.
-#' 
+#'
 #' @param check_onset Logical, defaults to `FALSE`. Should observations be
 #' checked for the presence of symptom onset data.
 #'
@@ -45,12 +45,13 @@ epict_check_raw_obs <- function(obs, dates_available = TRUE,
   }
   return(obs[])
 }
+
 #' Make time relative to first date of the test.
 #'
 #' @param obs A `data.frame` with the following variables:
 #'  - `test_date`: Date of the test yielding a Ct value.
 #'  - `onset_date`: Date of onset for each infection (optional).
-#' 
+#'
 #' @param baseline_date A date to use as the baseline date for all other
 #' times in the dataset. By default this is the minimum test date in the 
 #' dataset.
@@ -82,6 +83,7 @@ epict_make_time_rel <- function(obs, baseline_date = min(obs$test_date,
   }
   return(rel_obs[])
 }
+
 #' Drop Ct values with no data
 #'
 #' @param obs A `data.frame` with a numeric `ct_value` variable.
@@ -97,6 +99,7 @@ epict_drop_na_ct <- function(obs) {
  fil_obs <- data.table::as.data.table(obs)[!is.na(ct_value)]
  return(fil_obs[])
 }
+
 #' Make time relative to first uncensored test per ID
 #'
 #' @param obs A data.frame with the following variables:
@@ -117,7 +120,7 @@ epict_drop_na_ct <- function(obs) {
 #'  onset_t = c(rep(2, 3), rep(4, 4)),
 #'  censored = c(TRUE, FALSE, FALSE, TRUE, rep(FALSE, 3))
 #' )
-#' 
+#'
 #' epict_make_time_rel_to_first_uncensored(obs)
 epict_make_time_rel_to_first_uncensored <- function(obs) {
   rel_obs <- data.table::as.data.table(obs)
@@ -132,6 +135,7 @@ epict_make_time_rel_to_first_uncensored <- function(obs) {
   }
   return(rel_obs[])
 }
+
 #' Flag potentially spurious observations
 #'
 #' @param obs A data.frame with the following variables:
@@ -217,25 +221,26 @@ epict_flag_spurious_obs <- function(obs, max_t_rel_uncensored = 60,
   }
   return(fil_obs[])
 }
+
 #' Filter infection IDs based on characteristics
 #'
 #'
 #' @param obs A data.frame with the following variables:
 #'  - `id`: An integer vector uniquely identifying each infection.
 #'  - `t`: Time of test relative to a baseline date.
-#'  - `censored`: Logical, indicating if the Ct has been censored. 
-#' 
+#'  - `censored`: Logical, indicating if the Ct has been censored.
+#'
 #' @param min_uncensored_tests Numeric defaults to 2. The minimum number of
 #' uncensored tests an ID must have in order to be included in the processed
 #' dataset.
-#' 
+#'
 #' @param min_days_with_uncensored Numeric defaults to 2. The minimum number of
 #' days tests per ID must span in order to be included in the processed dataset.
 #'
 #' @param invert Logical, defaults to `FALSE`. Should the filtering
-#' requirements be inverted. This switches from exluding to including and
+#' requirements be inverted. This switches from excluding to including and
 #' can be used for debugging and data exploration.
-#' 
+#'
 #' @return A `data.table` with IDs failing/meeting the specified criteria
 #' removed.
 #' @family preprocess
@@ -247,17 +252,17 @@ epict_flag_spurious_obs <- function(obs, max_t_rel_uncensored = 60,
 #'  censored = c(TRUE, rep(FALSE, 3), TRUE, rep(FALSE, 4)),
 #'  id = c(1, 1, 1, 2, 3, 3, 4, 4, 4), t = c(0, 0, 1, 1, 1, 2, 1, 1, 1)
 #' )
-#' 
+#'
 #' # Use defaults
 #' epict_filter_ids(obs)
-#' 
+#'
 #' # Invert with defaults
 #' epict_filter_ids(obs, invert = TRUE)
-#' 
+#'
 #' # Remove IDs with less than 3 tests
 #' epict_filter_ids(obs, min_uncensored_tests = 3, min_days_with_uncensored = 1)
-#' 
-#' #' # Remove IDs with less than 3 tests - this will be all available data
+#'
+#' # Remove IDs with less than 3 tests - this will be all available data
 #' epict_filter_ids(obs, min_days_with_uncensored = 3)
 epict_filter_ids <- function(obs, min_uncensored_tests = 2,
                              min_days_with_uncensored = 2, invert = FALSE) {
@@ -281,9 +286,10 @@ epict_filter_ids <- function(obs, min_uncensored_tests = 2,
     fil_obs <- fil_obs[days_with_uncensored < min_days_with_uncensored]
   }
   return(fil_obs[])
-} 
+}
+
 #' Clean up factor levels
-#' 
+#'
 #' This utility function drops empty factor levels from target factors as well
 #' as converting them to factors from character variables.
 #'
@@ -304,10 +310,10 @@ epict_filter_ids <- function(obs, min_uncensored_tests = 2,
 #'  c = factor(c("fa", "asas", "asa"), levels = c("fa"))
 #')
 #' summary(obs)
-#' 
+#'
 #' # Default without specifying variables
 #' summary(epict_clean_factors(obs))
-#' 
+#'
 #' # Specify variables
 #' summary(epict_clean_factors(obs, vars = c("m", "c")))
 epict_clean_factors <- function(obs, vars = c()) {
@@ -322,6 +328,7 @@ epict_clean_factors <- function(obs, vars = c()) {
   }
   return(clean_obs[])
 }
+
 #' Check proccessed observations meet the package specification
 #'
 #' Checks the available proccessed observastionsfor required variables and
@@ -339,7 +346,7 @@ epict_clean_factors <- function(obs, vars = c()) {
 #'  - `onset_t_rel_uncensored`: Time of onset relative to the first uncensored
 #' Ct value for that id. (optional). NA if unavailable/asymptomatic.
 #'  - `censored`: Logical, indicating if the Ct has been censored.
-#' 
+#'
 #' @return A `data.table` of observations ready for use in [epict()] and other 
 #' package functions.
 #' @inheritParams epict_check_raw_obs

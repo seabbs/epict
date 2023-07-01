@@ -27,7 +27,7 @@ dataset.}
 days tests per ID must span in order to be included in the processed dataset.}
 
 \item{invert}{Logical, defaults to \code{FALSE}. Should the filtering
-requirements be inverted. This switches from exluding to including and
+requirements be inverted. This switches from excluding to including and
 can be used for debugging and data exploration.}
 }
 \value{
@@ -52,7 +52,7 @@ epict_filter_ids(obs, invert = TRUE)
 # Remove IDs with less than 3 tests
 epict_filter_ids(obs, min_uncensored_tests = 3, min_days_with_uncensored = 1)
 
-#' # Remove IDs with less than 3 tests - this will be all available data
+# Remove IDs with less than 3 tests - this will be all available data
 epict_filter_ids(obs, min_days_with_uncensored = 3)
 }
 \seealso{

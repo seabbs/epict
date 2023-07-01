@@ -10,7 +10,7 @@ epict_check_raw_obs(obs, dates_available = TRUE, check_onset = FALSE)
 \item{obs}{A data.frame with the following variables:
 \itemize{
 \item \code{id}: An integer vector uniquely identifying each infection.
-\item \code{test_id}: An integer vector uniquely identiying each test
+\item \code{test_id}: An integer vector uniquely identifying each test
 \item \code{ct_value}: Numeric cycle threshold value.
 \item \code{test_date}: Date of the test yielding a Ct value. (optional)
 \item \code{t}: Time of test relative to a baseline date. Optional but required
